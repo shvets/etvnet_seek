@@ -1,0 +1,116 @@
+/* 
+ * Converts file names in directory recursively from Runglish to Russian.
+ *
+ * Runglish stands for Russian text in Latin letters.
+*/
+
+char[] rTable = new char[] {
+  '\u0430', '\u0431', '\u0432', '\u0433', '\u0434', '\u0435', '\u0436', '\u0437',
+  '\u0438', '\u0439', '\u043a', '\u043b', '\u043c', '\u043d', '\u043e', '\u043f',
+  '\u0440', '\u0441', '\u0442', '\u0443', '\u0444', '\u0445', '\u0446', '\u0447',
+  '\u0448', '\u0449', '\u044a', '\u044b', '\u044c', '\u044d', '\u044e', '\u044f',
+  '\u0451',
+  '\u0401',
+  '\u0410', '\u0411', '\u0412', '\u0413', '\u0414', '\u0415', '\u0416', '\u0417',
+  '\u0418', '\u0419', '\u041a', '\u041b', '\u041c', '\u041d', '\u041e', '\u041f',
+  '\u0420', '\u0421', '\u0422', '\u0423', '\u0424', '\u0425', '\u0426', '\u0427',
+  '\u0428', '\u0429', '\u042a', '\u042b', '\u042c', '\u042d', '\u042e', '\u042f'
+};
+
+
+String[] eTable = new String[] {
+  "a", "b", "v", "g", "d", "e", "zh", "z", "i", "y", "k", "l", "m", "n", "o", "p", "r",
+  "s", "t", "u", "f", "h", "c", "ch", "sh", "s'h", "''", "yi", "'", "ye", "yu", "ya",
+  "yo",
+  "YO",
+  "A", "B", "V", "G", "D", "E", "Zh", "Z", "I", "Y", "K", "L", "M", "N", "O", "P", "R",
+  "S", "T", "U", "F", "H", "C", "Ch", "Sh", "S'h", "''", "Yi", "'", "Ye", "Yu", "Ya"
+};
+
+
+int indexOf(String[] table, String s) {
+  String s1 = null;
+
+  if(s.length() >= 3) {
+    s1 = s.substring(0, 3);
+
+    for(int i=0; i < table.length; i++) {
+      if(s1.equals(table[i])) {
+        return i;
+      }
+    }
+  }
+
+  if(s.length() >= 2) {
+    s1 = s.substring(0, 2);
+
+    for(int i=0; i < table.length; i++) {
+      if(s1.equals(table[i])) {
+        return i;
+      }
+    }
+  }
+
+  if(s.length() >= 1) {
+    s1 = s.substring(0, 1);
+
+    for(int i=0; i < table.length; i++) {
+      if(s1.equals(table[i])) {
+        return i;
+      }
+    }
+  }
+
+  return -1;
+}
+
+String translate(String oldName) {
+  StringBuffer newName = new StringBuffer();
+
+  for(int i=0; i < oldName.length();) {
+    String s = oldName.substring(i);
+
+    int index = indexOf(eTable, s);
+
+    int sz = 1;
+
+    if(index == -1) {
+      newName.append(oldName.substring(i, i+1));
+    }
+    else {
+      sz = eTable[index].length();
+
+      newName.append(rTable[index]);
+    }
+
+    i += sz;
+  }
+
+  return newName.toString();
+}
+
+
+File dir = new File(".");
+
+File[] list = dir.listFiles();
+
+for(int i=0; i < list.length; i++) {
+  File file = list[i];
+
+  String oldName = file.getName();
+
+  if(oldName.toLowerCase().endsWith(".mp3")) {
+    String newName = null;
+
+    int pos = oldName.lastIndexOf('.');
+
+    if(pos != -1) {
+      newName = translate(oldName.substring(0, pos)) + oldName.substring(pos);
+    }
+    else {
+      newName = translate(name);
+    }
+   
+    file.renameTo(new File(newName));
+  }
+}
