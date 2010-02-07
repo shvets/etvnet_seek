@@ -4,20 +4,30 @@ require 'rubygems' unless RUBY_VERSION =~ /1.9.*/
 
 #require 'spec'
 
-require 'etvnet_seek'
+require 'main'
+require 'url_seeker'
+require 'runglish'
 
-describe EtvnetSeek do
+describe UrlSeeker do
 
   before :each do
-    @client = EtvnetSeek.new
+    @client = UrlSeeker.new
   end
 
   it "should return search menu items" do
     keywords = "красная шапочка"
 
-    @client.search(keywords).size.should > 0
-    items = @client.search(keywords)
-    @client.display_search_items items
+    #@client.search(keywords).size.should > 0
+
+    items = @client.search(Main.search_url(keywords))
+    @client.display_results items
   end
 
+end
+
+describe Runglish do
+  it "should return translation" do
+    Runglish.new.translate("kak dela?").size.should > 0
+    p Runglish.new.translate("kak dela?")
+  end
 end

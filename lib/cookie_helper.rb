@@ -7,7 +7,7 @@ module CookieHelper
     conn = Net::HTTP.new(uri.host, uri.port)
 
     headers = { "Content-Type" => "application/x-www-form-urlencoded" }
-    resp, data = conn.post("/cgi-bin/video/login.fcgi",
+    resp, data = conn.post(uri.path,
       "action=login&username=#{username}&pwd=#{password}&skip_notice=&redirect=", headers)
 
     cookie = resp.response['set-cookie']
