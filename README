@@ -1,0 +1,11 @@
+= Etvnet Seek Gem -- Command line tool for getting mms urls from etvnet service.
+
+= Installing Etvnet Seek
+
+== Installing the Gem
+    $ sudo gem sources -a http://gemcutter.org
+    $ sudo gem install etvnet_seek
+
+== Usage
+
+etvnet_seek movie_title

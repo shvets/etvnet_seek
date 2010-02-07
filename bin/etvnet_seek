@@ -1,0 +1,30 @@
+#!/usr/bin/env ruby
+
+require 'rubygems' unless RUBY_VERSION =~ /1.9.*/
+
+$:.unshift(File::join(File::dirname(File::dirname(__FILE__)), "lib"))
+
+require 'etvnet_seek'
+
+client = EtvnetSeek.new
+
+items = client.search ARGV.join(' ')
+
+client.display_search_items items
+
+title_number = ask("Select title : ")
+
+dot_index = title_number.index('.')
+
+if not dot_index.nil?
+  pos1 = title_number[0..dot_index-1].to_i
+  pos2 = title_number[dot_index+1..-1].to_i
+
+  movie_link = client.grab_movie_link items[pos1-1][:container][pos2-1][:link]
+else
+  movie_link = client.grab_movie_link items[title_number.to_i-1][:link]
+end
+
+puts "Link: #{movie_link}"
+
+`open #{movie_link}`
