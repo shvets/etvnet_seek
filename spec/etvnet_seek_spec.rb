@@ -1,7 +1,8 @@
 $LOAD_PATH.unshift File.dirname(__FILE__) + '/../lib'
 
-require 'rubygems'
-require 'spec'
+require 'rubygems' unless RUBY_VERSION =~ /1.9.*/
+
+#require 'spec'
 
 require 'etvnet_seek'
 
@@ -19,13 +20,4 @@ describe EtvnetSeek do
     @client.display_search_items items
   end
 
-  it "should return single search item" do
-    keywords = "красная шапочка"
-
-    result = @client.search(keywords)
-
-    result.each do |item|
-      #item.class.should == Hash if item[:]
-    end
-  end
 end

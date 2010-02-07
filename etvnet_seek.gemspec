@@ -31,7 +31,11 @@ Gem::Specification.new do |s|
   s.requirements = ["none"]
   s.executables = ['etvnet_seek']
   s.bindir = "bin"
-  
+
+  s.add_dependency("json_pure", ">= 1.2.0")
+  s.add_dependency("highline", ">= 1.5.1")
+  s.add_dependency("nokogiri", ">= 1.3.3")
+
   s.add_development_dependency "rspec", ">= 1.2.8"
   s.add_development_dependency "mocha", ">= 0.9.7"  
 end
