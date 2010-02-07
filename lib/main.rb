@@ -33,7 +33,7 @@ class Main
 
     url_seeker = UrlSeeker.new
 
-    items = url_seeker.search search_url(keywords)
+    items = url_seeker.search Main.search_url(keywords)
 
     if items.size == 0
       say "Empty search result."
