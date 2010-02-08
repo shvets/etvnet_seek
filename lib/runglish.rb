@@ -2,42 +2,131 @@
 #
 # Runglish stands for Russian text in Latin letters.
 
+# -*- encoding: utf-8 -*-
+
+if RUBY_VERSION < "1.9"
+  $KCODE = 'u'
+end
+
 class Runglish
-  RUSSIAN_TABLE = [
-    '\u0430', '\u0431', '\u0432', '\u0433', '\u0434', '\u0435', '\u0436', '\u0437',
-    '\u0438', '\u0439', '\u043a', '\u043b', '\u043c', '\u043d', '\u043e', '\u043f',
-    '\u0440', '\u0441', '\u0442', '\u0443', '\u0444', '\u0445', '\u0446', '\u0447',
-    '\u0448', '\u0449', '\u044a', '\u044b', '\u044c', '\u044d', '\u044e', '\u044f',
-    '\u0451',
-    '\u0401',
-    '\u0410', '\u0411', '\u0412', '\u0413', '\u0414', '\u0415', '\u0416', '\u0417',
-    '\u0418', '\u0419', '\u041a', '\u041b', '\u041c', '\u041d', '\u041e', '\u041f',
-    '\u0420', '\u0421', '\u0422', '\u0423', '\u0424', '\u0425', '\u0426', '\u0427',
-    '\u0428', '\u0429', '\u042a', '\u042b', '\u042c', '\u042d', '\u042e', '\u042f'
-  ]
+
+  LOWER_SINGLE = {
+    "і"=>"i", "ґ"=>"g", "ё"=>"yo", "№"=>"#", "є"=>"e", "ї"=>"yi",
+    "а"=>"a", "б"=>"b", "в"=>"v", "г"=>"g", "д"=>"d", "е"=>"e", "ж"=>"zh",
+    "з"=>"z", "и"=>"i", "й"=>"y", "к"=>"k", "л"=>"l", "м"=>"m", "н"=>"n", "о"=>"o", "п"=>"p", "р"=>"r",
+    "с"=>"s", "т"=>"t", "у"=>"u", "ф"=>"f", "х"=>"h", "ц"=>"ts", "ч"=>"ch", "ш"=>"sh", "щ"=>"sch",
+    "ъ"=>"'", "ы"=>"y", "ь"=>"", "э"=>"e", "ю"=>"yu", "я"=>"ya",
+  }
+
+  LOWER_MULTI = {
+    "ье"=>"ie",
+    "ьё"=>"ie",
+  }
+
+  UPPER_SINGLE = {
+    "Ґ"=>"G", "Ё"=>"YO", "Є"=>"E", "Ї"=>"YI", "І"=>"I",
+    "А"=>"A", "Б"=>"B", "В"=>"V", "Г"=>"G", "Д"=>"D", "Е"=>"E", "Ж"=>"ZH",
+    "З"=>"Z", "И"=>"I", "Й"=>"Y", "К"=>"K", "Л"=>"L", "М"=>"M", "Н"=>"N", "О"=>"O", "П"=>"P", "Р"=>"R",
+    "С"=>"S", "Т"=>"T", "У"=>"U", "Ф"=>"F", "Х"=>"H", "Ц"=>"TS", "Ч"=>"CH", "Ш"=>"SH", "Щ"=>"SCH",
+    "Ъ"=>"'", "Ы"=>"Y", "Ь"=>"", "Э"=>"E", "Ю"=>"YU", "Я"=>"YA",
+  }
+
+  UPPER_MULTI = {
+    "ЬЕ"=>"IE",
+    "ЬЁ"=>"IE",
+  }
+
+  LOWER = (LOWER_SINGLE.merge(LOWER_MULTI)).freeze
+  UPPER = (UPPER_SINGLE.merge(UPPER_MULTI)).freeze
+  MULTI_KEYS = (LOWER_MULTI.merge(UPPER_MULTI)).keys.sort_by {|s| s.length}.reverse.freeze
 
 
-  ENGLISH_TABLE = [
-    "a", "b", "v", "g", "d", "e", "zh", "z", "i", "y", "k", "l", "m", "n", "o", "p", "r",
-    "s", "t", "u", "f", "h", "c", "ch", "sh", "s'h", "''", "yi", "'", "ye", "yu", "ya",
-    "yo",
-    "YO",
-    "A", "B", "V", "G", "D", "E", "Zh", "Z", "I", "Y", "K", "L", "M", "N", "O", "P", "R",
-    "S", "T", "U", "F", "H", "C", "Ch", "Sh", "S'h", "''", "Yi", "'", "Ye", "Yu", "Ya"
-  ]
+  LOWER_SINGLE_2 = {
+    "i"=>"і", "g"=>"ґ", "#"=>"№", "e"=>"є",
+    "a"=>"а", "b"=>"б", "v"=>"в", "g"=>"г", "d"=>"д", "e"=>"е", "z"=>"з", "i"=>"и", "y"=>"й",
+    "k"=>"к", "l"=>"л", "m"=>"м", "n"=>"н", "o"=>"о", "p"=>"п", "r"=>"р", "s"=>"с", "t"=>"т",
+    "u"=>"у", "f"=>"ф", "h"=>"х", "'"=>"ъ", "y"=>"ы", "e"=>"э"
+  }
+  LOWER_MULTI_2 = {
+    "yo"=>"ё",
+    "yi"=>"ї",
+    "zh"=>"ж",
+    "ts"=>"ц",
+    "ch"=>"ч",
+    "sh"=>"ш",
+    "sch"=>"щ",
+    "yu"=>"ю",
+    "ya"=>"я",
+    "ie"=>"ье"
+  }
 
-  ENGLISH_RUSSIAN_MAP = Hash[*ENGLISH_TABLE.zip(RUSSIAN_TABLE).flatten]
+  UPPER_SINGLE_2 = {
+    "G"=>"Ґ", "Є"=>"E", "I"=>"І",
+    "A"=>"А", "B"=>"Б", "V"=>"В", "G"=>"Г", "D"=>"Д", "E"=>"Е", "Z"=>"З", "I"=>"И",
+    "Y"=>"Й", "K"=>"К", "L"=>"Л", "M"=>"М", "N"=>"Н", "O"=>"О", "P"=>"П", "R"=>"Р",
+    "S"=>"С", "T"=>"Т", "U"=>"У", "F"=>"Ф", "H"=>"Х", "'"=>"Ъ", "Y"=>"Ы", "E"=>"Э"
+  }
 
-  def translate(old_text)
-    new_text = ""
+  UPPER_MULTI_2 = {
+    "YO"=>"Ё",
+    "YI"=>"Ї",
+    "ZH"=>"Ж",
+    "TS"=>"Ц",
+    "CH"=>"Ч",
+    "SH"=>"Ш",
+    "SCH"=>"Щ",
+    "YU"=>"Ю",
+    "YA"=>"Я",
+    "IE"=>"ЬЕ"
+  }
 
-    old_text.each_char do |ch|
-       new_ch = ENGLISH_RUSSIAN_MAP[ch].nil? ? ch : ENGLISH_RUSSIAN_MAP[ch]
+  LOWER_2 = (LOWER_SINGLE_2.merge(LOWER_MULTI_2)).freeze
+  UPPER_2 = (UPPER_SINGLE_2.merge(UPPER_MULTI_2)).freeze
+  MULTI_KEYS_2 = (LOWER_MULTI_2.merge(UPPER_MULTI_2)).keys.sort_by {|s| s.length}.reverse.freeze
 
-      new_text += new_ch
+  # Transliterate a string with russian characters
+  #
+  # Возвращает строку, в которой все буквы русского алфавита заменены на похожую по звучанию латиницу
+  def ru_to_lat(str)
+    chars = str.scan(%r{#{MULTI_KEYS.join '|'}|\w|.})
+
+    result = ""
+
+    chars.each_with_index do |char, index|
+      if UPPER.has_key?(char) && LOWER.has_key?(chars[index+1])
+        # combined case
+        result << UPPER[char].downcase.capitalize
+      elsif UPPER.has_key?(char)
+        result << UPPER[char]
+      elsif LOWER.has_key?(char)
+        result << LOWER[char]
+      else
+        result << char
+      end
     end
 
-    new_text
+    result
+  end
+
+  def lat_to_ru(str)
+    chars = str.scan(%r{#{MULTI_KEYS_2.join '|'}|\w|.})
+
+    result = ""
+
+    chars.each_with_index do |char, index|
+      if UPPER_2.has_key?(char) && LOWER_2.has_key?(chars[index+1])
+        # combined case
+        result << UPPER_2[char].downcase.capitalize
+      elsif UPPER_2.has_key?(char)
+        result << UPPER_2[char]
+      elsif LOWER_2.has_key?(char)
+        result << LOWER_2[char]
+      else
+        result << char
+      end
+    end
+
+    result
   end
 end
 

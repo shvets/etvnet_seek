@@ -5,6 +5,7 @@ require "highline/import"
 
 require 'cookie_helper'
 require 'url_seeker'
+require 'runglish'
 
 class Main
   include CookieHelper

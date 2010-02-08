@@ -8,3 +8,7 @@
 == Version 0.2.0
 
 * Bug fixes, code for Windows
+
+== Version 0.3.0
+
+* Bug fixes, support for Runglish (you can enter russian string as latin one)

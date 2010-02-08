@@ -27,7 +27,8 @@ end
 
 describe Runglish do
   it "should return translation" do
-    Runglish.new.translate("kak dela?").size.should > 0
-    p Runglish.new.translate("kak dela?")
+    #Runglish.new.translate("kak dela?").size.should > 0
+    p Runglish.new.ru_to_lat("как дела?")
+    p Runglish.new.lat_to_ru("krasnaya shapochka")
   end
 end

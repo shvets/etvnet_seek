@@ -11,7 +11,13 @@ require 'main'
 
 client = Main.new
 
-movie_link = client.search_and_grab_link ARGV.join(' ')
+keywords = ARGV.join(' ')
+
+if RUBY_PLATFORM =~ /mswin32/
+  keywords = Runglish.new.lat_to_ru(keywords)
+end
+
+movie_link = client.search_and_grab_link keywords
 
 if movie_link
   puts "Link: #{movie_link}"
