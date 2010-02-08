@@ -23,7 +23,7 @@ if movie_link
   puts "Link: #{movie_link}"
   
   if RUBY_PLATFORM =~ /(win|w)32$/
-    `wmplayer #{movie_link}`
+    `start wmplayer #{movie_link}`
   elsif RUBY_PLATFORM =~ /darwin/
     `open #{movie_link}`
   end
