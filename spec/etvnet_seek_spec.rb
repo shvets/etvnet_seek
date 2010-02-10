@@ -2,8 +2,6 @@ $LOAD_PATH.unshift File.dirname(__FILE__) + '/../lib'
 
 require 'rubygems' unless RUBY_VERSION =~ /1.9.*/
 
-#require 'spec'
-
 require 'main'
 require 'url_seeker'
 require 'runglish'

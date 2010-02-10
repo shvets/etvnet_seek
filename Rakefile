@@ -15,4 +15,11 @@ task :"run:gem" do
   puts ruby("#{command}")
 end
 
+# configure rspec
+#Spec::Rake::SpecTask.new do |spec|
+#  spec.spec_files = FileList["spec/**/*_spec.rb"]
+#  spec.spec_opts << "--color"
+#  spec.libs += ["lib", "spec"]
+#end
+
 task :default => :zip

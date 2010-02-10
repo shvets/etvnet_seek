@@ -34,8 +34,9 @@ Gem::Specification.new do |s|
 
   s.add_dependency("json_pure", ">= 1.2.0")
   s.add_dependency("highline", ">= 1.5.1")
-  s.add_dependency("nokogiri", ">= 1.3.3")
+  s.add_dependency("libxml-ruby", ">= 1.1.3")
+  s.add_dependency("nokogiri", ">= 1.4.1")
 
-  s.add_development_dependency "rspec", ">= 1.2.8"
+  s.add_development_dependency "rspec", ">= 1.2.9"
   s.add_development_dependency "mocha", ">= 0.9.7"  
 end
