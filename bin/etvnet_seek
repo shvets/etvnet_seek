@@ -13,15 +13,11 @@ trap('INT') { puts "Program was interrupted..."; exit }
 
 client = Main.new
 
-client.parse_options
+link = client.search ARGV.join(' ')
 
-movie_link = client.search_and_grab_link ARGV.join(' ')
-
-if movie_link
-  puts "Link: #{movie_link}"
+if link
+  puts "Link: #{link}"
   
-  client.launch_link movie_link
-else
-  puts "Cannot get movie link..."
+  client.launch_link link
 end
 

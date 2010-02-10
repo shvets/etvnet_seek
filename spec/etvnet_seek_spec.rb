@@ -9,15 +9,13 @@ require 'runglish'
 describe UrlSeeker do
 
   before :each do
-    @client = UrlSeeker.new
+    @client = UrlSeeker.new(Main::SEARCH_URL, Main::ACCESS_URL)
   end
 
   it "should return search menu items" do
     keywords = "красная шапочка"
 
-    #@client.search(keywords).size.should > 0
-
-    items = @client.search(Main.search_url(keywords))
+    items = @client.search(keywords)
     @client.display_results items
   end
 
@@ -25,8 +23,7 @@ end
 
 describe Runglish do
   it "should return translation" do
-    #Runglish.new.translate("kak dela?").size.should > 0
-    p Runglish.new.ru_to_lat("как дела?")
-    p Runglish.new.lat_to_ru("krasnaya shapochka")
+    Runglish.new.ru_to_lat("как дела?").should == "kak dela?"
+    Runglish.new.lat_to_ru("krasnaya shapochka").should == "красная шапочка"
   end
 end

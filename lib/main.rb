@@ -11,21 +11,18 @@ require 'optparse'
 class Main
   include CookieHelper
 
-  BASE_URL = "http://www.etvnet.ca"
-  SEARCH_URL = BASE_URL + "/cgi-bin/video/eitv_browse.fcgi?action=search"
-  ACCESS_URL = BASE_URL + "/cgi-bin/video/access.fcgi"
-  LOGIN_URL =  BASE_URL + "/cgi-bin/video/login.fcgi"
-
   COOKIE_FILE_NAME = ENV['HOME'] + "/.etvnet-seek"
 
   attr_reader :cookie, :options
 
   def initialize
     @cookie = get_cookie
-  end
 
-  def self.search_url keywords, order_direction='-'
-    SEARCH_URL + "&keywords=#{CGI.escape(keywords)}&order_direction=#{order_direction}"
+    parse_options
+
+    @mode = get_mode
+
+    @url_seeker = UrlSeeker.new
   end
 
   def parse_options
@@ -44,6 +41,31 @@ class Main
         options[:runglish] = true
       end
 
+      options[:main] = false
+      opts.on( '-m', '--main', 'Display Main Menu' ) do
+        options[:main] = true
+      end
+
+#      options[:channels] = false
+#      opts.on( '-c', '--channels', 'Display Channels Menu' ) do
+#        options[:channels] = true
+#      end
+
+      options[:popular] = false
+      opts.on( '-p', '--popular', 'Display Popular Menu' ) do
+        options[:popular] = true
+      end
+
+      options[:best_ten] = false
+      opts.on( '-b', '--best-ten', 'Display Best 10 Menu' ) do
+        options[:best_ten] = true
+      end
+
+      options[:we_recommend] = false
+      opts.on( '-w', '--we-recommend', 'Display We recommend Menu' ) do
+        options[:we_recommend] = true
+      end
+
       # This displays the help screen, all programs are
       # assumed to have this option.
       opts.on( '-h', '--help', 'Display this screen' ) do
@@ -55,25 +77,74 @@ class Main
     optparse.parse!
   end
 
-  def search_and_grab_link input
-    keywords = read_keywords(input)
-    
-    url_seeker = UrlSeeker.new
+  def get_mode
+    mode = 'search'
 
-    items = url_seeker.search Main.search_url(keywords)
+    if options[:main] == true
+      mode = 'main'
+    elsif options[:best_ten] == true
+      mode = 'best_ten'
+    elsif options[:popular] == true
+      mode = 'popular'
+    elsif options[:we_recommend] == true
+      mode = 'we_recommend'
+    end
 
-    url_seeker.display_results items
+    mode
+  end
+
+  def search input
+    items = get_items input
+
+    retrieve_link items
+  end
+
+  def get_items input
+    items = []
+
+    case @mode
+      when 'search' then
+        keywords = read_keywords(input)
+        puts "Keywords: #{keywords}"
+
+        items = @url_seeker.search_items keywords
+      when 'main' then
+        items = @url_seeker.main_items
+      when 'best_ten' then
+        items = @url_seeker.best_ten_items
+      when 'popular' then
+        items = @url_seeker.popular_items
+      when 'we_recommend' then
+        items = @url_seeker.we_recommend_items
+    end
+
+    items
+  end
+
+  def retrieve_link items
+    @url_seeker.display_items items
+    puts "q. to exit"
 
     link = nil
 
     if items.size > 0
       title_number = read_title_number
 
-      link = url_seeker.grab_media_link(items, title_number, cookie, ACCESS_URL) do
-        delete_cookie
-        @cookie = get_cookie
+      unless title_number.quit?
+        media = @url_seeker.grab_media(items, title_number, cookie)
+
+        link = @url_seeker.mms_link(media)
+
+        if link.nil? and @url_seeker.session_expired?(media)
+          delete_cookie
+          @cookie = get_cookie
+          media = @url_seeker.grab_media items, title_number, cookie
+          link = @url_seeker.mms_link(media)
+        end
+        
+        puts "Cannot get movie link..." if link.nil?
       end
-     end
+    end
 
     link
   end
@@ -105,13 +176,15 @@ class Main
   end
 
   def read_title_number
-    title_number = ask("Select title number: ")
+    input = ask("Select title number: ")
 
-    while not title_number =~ /(\d+)(\.?)(\d*)/
-      title_number = ask("Select title number: ")
+    unless ['q', 'Q'].include? input
+      while not input =~ /(\d+)(\.?)(\d*)/ or input =~ /q/i
+        input = ask("Select title number: ")
+      end
     end
 
-    title_number
+    TitleNumber.new input
   end
 
   def get_cookie
@@ -121,7 +194,7 @@ class Main
       username = ask("Enter username :  " )
       password = ask("Enter password : " ) { |q| q.echo = '*' }
 
-      cookie = retrieve_cookie LOGIN_URL, username, password
+      cookie = retrieve_cookie UrlSeeker::LOGIN_URL, username, password
 
       write_cookie COOKIE_FILE_NAME, cookie
    end

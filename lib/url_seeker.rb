@@ -3,97 +3,62 @@ require 'open-uri'
 require 'cgi'
 require 'json'
 
+require 'items_helper'
+require 'title_number'
+
 class UrlSeeker
+  include ItemsHelper
 
-  def search url
-    doc = Nokogiri::HTML(open(url))
+  BASE_URL = "http://www.etvnet.ca"
+  SEARCH_URL = BASE_URL + "/cgi-bin/video/eitv_browse.fcgi?action=search"
+  ACCESS_URL = BASE_URL + "/cgi-bin/video/access.fcgi"
+  LOGIN_URL =  BASE_URL + "/cgi-bin/video/login.fcgi"
 
-    list = []
+  def search_items keywords, order_direction='-'
+    search_url = "#{SEARCH_URL}&keywords=#{CGI.escape(keywords)}&order_direction=#{order_direction}"
 
-    doc.css("table tr[2] td table").each do |item|
-      links = item.css(".media_file")
-
-      links.each_with_index do |link, index|
-        if index % 2 != 0
-          href = link.attributes['href'].value
-
-          new_link = list.select {|l| l[:link] == href}.empty?
-
-          if new_link
-            record = {:link => href,
-                      :name => link.content.strip,
-  #                    :first_time => link.parent.parent.previous.previous.previous.previous.content.strip,
-  #                    :year => link.parent.parent.next.next.content.strip,
-  #                    :how_long => link.parent.parent.next.next.next.next.content.strip
-            }
-
-            if href =~ /action=browse_container/
-              record[:container] = search(href)
-            else
-              result = href.match(/(\w*)\/(\w*)\/(\w*)\/([\w|-]*)/)
-
-              record[:media_file] = (result.size > 2) ? result[3] : ""
-              record[:english_name] = (result.size > 3) ? result[4] : ""
-            end
-
-            list << record
-          end
-        end
-      end
-    end
-
-    list
+    get_search_menu_items search_url
   end
 
-  def display_results items
+  def main_items
+    get_main_menu_items BASE_URL
+  end
+
+  def best_ten_items
+    get_best_ten_items BASE_URL
+  end
+
+  def popular_items
+    get_popular_items BASE_URL
+  end
+
+  def we_recommend_items
+    get_we_recommend_items BASE_URL
+  end
+
+  def display_items items
     if items.size == 0
       puts "Empty search result."
     else
       items.each_with_index do |item1, index1|
 
-        if item1[:container].nil?
-          puts "#{index1+1}. #{item1[:english_name]} --- #{item1[:media_file]} --- #{item1[:name]}"
-        else
-          puts "#{index1+1}. #{item1[:name]}"
+        if item1.container?
+          puts "#{index1+1}. #{item1[:text]}"
 
-          item1[:container].each_with_index do |item2, index2|
-            puts "    #{index1+1}.#{index2+1}. #{item2[:english_name]} --- #{item2[:media_file]} --- #{item2[:name]}"
+          item1.container.each_with_index do |item2, index2|
+            puts "  #{index1+1}.#{index2+1}. #{item2}"
           end
+        else
+          puts "#{index1+1}. #{item1}"
         end
       end
     end
   end
 
-  def grab_media_link items, title_number, cookie, url
-    dot_index = title_number.index('.')
+  def grab_media items, title_number, cookie
+    link = title_number.one_level? ? items[title_number.index1].link : items[index1].container[index2].link
 
-    if not dot_index.nil?
-      pos1 = title_number[0..dot_index-1].to_i
-      pos2 = title_number[dot_index+1..-1].to_i
-
-      media = grab_media items[pos1-1][:container][pos2-1][:link], cookie, url
-    else
-      media = grab_media items[title_number.to_i-1][:link], cookie, url
-    end
-
-    link = mms_link(media)
-
-    if link.nil?
-      if url_seeker.session_expired?(media)
-        yield
-        grab_media_link items, title_number
-      end
-    end
-
-    link
-  end
-
-  def grab_media link, cookie, url
-    result = link.match(/(\w*)\/(\w*)\/(\w*)\/([\w|-]*)/)
-
-    media_file = (not result.nil? and result.size > 2) ? result[3] : ""
-
-    request_media_info media_file, cookie, url
+    grab_media_info link, cookie
   end
 
   def mms_link media_info
@@ -103,11 +68,19 @@ class UrlSeeker
   def session_expired? media_info
     JSON.parse(media_info)["PARAMETERS"]["error_session_expire"] == 1
   end
-  
+
   private
 
-  def request_media_info media_file, cookie, url
-    url = URI.parse(url)
+  def grab_media_info link, cookie
+    result = link.match(/(\w*)\/(\w*)\/(\w*)\/([\w|-]*)/)
+
+    media_file = (not result.nil? and result.size > 2) ? result[3] : ""
+
+    request_media_info media_file, cookie
+  end
+
+  def request_media_info media_file, cookie
+    url = URI.parse(ACCESS_URL)
     conn = Net::HTTP.new(url.host, url.port)
     
     headers = { 'Cookie' => cookie }
