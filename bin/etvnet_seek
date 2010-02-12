@@ -13,10 +13,10 @@ trap('INT') { puts "Program was interrupted..."; exit }
 
 client = Main.new
 
-link = client.search ARGV.join(' ')
+link, english_name = client.seek ARGV.join(' ')
 
 if link
-  puts "Link: #{link}"
+  puts "Link (#{english_name}): #{link}"
   
   client.launch_link link
 end

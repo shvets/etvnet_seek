@@ -17,6 +17,66 @@ class UrlSeeker
   CHANNELS_URL = BROWSE_URL + "?action=channels"
   TODAY_URL    = BROWSE_URL + "?action=today"
 
+  def get_items mode, *params
+    case mode
+      when 'search' then
+        search_items *params
+      when 'main' then
+        main_items
+      when 'channels' then
+        channel_items
+      when 'best_ten' then
+        best_ten_items
+      when 'popular' then
+        popular_items
+      when 'we_recommend' then
+        we_recommend_items
+      when 'today' then
+        today_items *params
+      when 'archive' then
+        p "1"
+        archive_items *params
+      else
+        []
+    end
+  end
+
+  def display_items items
+    if items.size == 0
+      puts "Empty search result."
+    else
+      items.each_with_index do |item1, index1|
+        if item1.container?
+          puts "#{index1+1}. #{item1.text}"
+
+          item1.container.each_with_index do |item2, index2|
+            puts "  #{index1+1}.#{index2+1}. #{item2}"
+          end
+        else
+          puts "#{index1+1}. #{item1}"
+        end
+      end
+    end
+  end
+
+  def grab_media items, title_number, cookie
+    item = title_number.one_level? ? items[title_number.index1] :
+                                     items[title_number.index1].container[title_number.index2]
+    media = request_media_info(item.media_file, cookie)
+
+    [media, item.english_name]
+  end
+
+  def mms_link media_info
+    JSON.parse(media_info)["PARAMETERS"]["REDIRECT_URL"]
+  end
+
+  def session_expired? media_info
+    JSON.parse(media_info)["PARAMETERS"]["error_session_expire"] == 1
+  end
+
+  private
+
   def search_items keywords, order_direction='-'
     search_url = "#{SEARCH_URL}&keywords=#{CGI.escape(keywords)}&order_direction=#{order_direction}"
 
@@ -47,50 +107,8 @@ class UrlSeeker
     get_menu_items "#{TODAY_URL}&channel=#{channel}"
   end
 
-  def archive_items
-    get_archive_items "#{BROWSE_URL}&channel=#{channel}"
-  end
-
-  def display_items items
-    if items.size == 0
-      puts "Empty search result."
-    else
-      items.each_with_index do |item1, index1|
-        if item1.container?
-          puts "#{index1+1}. #{item1.text}"
-
-          item1.container.each_with_index do |item2, index2|
-            puts "  #{index1+1}.#{index2+1}. #{item2}"
-          end
-        else
-          puts "#{index1+1}. #{item1}"
-        end
-      end
-    end
-  end
-
-  def grab_media items, title_number, cookie
-    link = title_number.one_level? ? items[title_number.index1].link :
-                                     items[title_number.index1].container[title_number.index2].link
-    grab_media_info link, cookie
-  end
-
-  def mms_link media_info
-    JSON.parse(media_info)["PARAMETERS"]["REDIRECT_URL"]
-  end
-
-  def session_expired? media_info
-    JSON.parse(media_info)["PARAMETERS"]["error_session_expire"] == 1
-  end
-
-  private
-
-  def grab_media_info link, cookie
-    result = link.match(/(\w*)\/(\w*)\/(\w*)\/([\w|-]*)/)
-
-    media_file = (not result.nil? and result.size > 2) ? result[3] : ""
-
-    request_media_info media_file, cookie
+  def archive_items channel
+    get_menu_items "#{BROWSE_URL}?channel=#{channel}"
   end
 
   def request_media_info media_file, cookie
