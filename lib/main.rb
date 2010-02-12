@@ -46,24 +46,24 @@ class Main
         options[:main] = true
       end
 
-#      options[:channels] = false
-#      opts.on( '-c', '--channels', 'Display Channels Menu' ) do
-#        options[:channels] = true
-#      end
-
+      options[:best_ten] = false
+      opts.on( '-b', '--best-ten', 'Display Best 10 Menu' ) do
+        options[:best_ten] = true
+      end
+      
       options[:popular] = false
       opts.on( '-p', '--popular', 'Display Popular Menu' ) do
         options[:popular] = true
       end
 
-      options[:best_ten] = false
-      opts.on( '-b', '--best-ten', 'Display Best 10 Menu' ) do
-        options[:best_ten] = true
-      end
-
       options[:we_recommend] = false
       opts.on( '-w', '--we-recommend', 'Display We recommend Menu' ) do
         options[:we_recommend] = true
+      end
+
+      options[:channels] = false
+      opts.on( '-c', '--channels', 'Display Channels Menu' ) do
+        options[:channels] = true
       end
 
       # This displays the help screen, all programs are
@@ -88,6 +88,8 @@ class Main
       mode = 'popular'
     elsif options[:we_recommend] == true
       mode = 'we_recommend'
+    elsif options[:channels] == true
+      mode = 'channels'
     end
 
     mode
@@ -96,7 +98,63 @@ class Main
   def search input
     items = get_items input
 
-    retrieve_link items
+    @url_seeker.display_items items
+    puts "<number> => today; <number>.a => archive" if options[:channels]
+    puts "q. to exit"
+
+    if items.size == 0
+      nil
+    else
+      user_selection = read_user_selection
+
+      if user_selection.quit?
+        nil
+      else
+        if options[:channels]
+          if user_selection.archive?
+            link = search_archive
+          else
+#            channel = items[user_selection.index1].today_link
+#            p channel
+            link = search_today items[user_selection.index1].channel
+          end
+        else
+          link = retrieve_link items, user_selection
+        end
+
+        puts "Cannot get movie link..." if link.nil?
+
+        link
+      end
+    end
+  end
+
+  def search_archive channel
+    items = @url_seeker.archive_items channel
+
+    @url_seeker.display_items items
+
+    user_selection = read_user_selection
+
+    if user_selection.quit?
+      nil
+    else
+      retrieve_link items, user_selection
+    end
+  end
+
+  def search_today channel
+    items = @url_seeker.today_items channel
+
+    @url_seeker.display_items items
+                p "****** #{items[0]}"
+    user_selection = read_user_selection
+
+    if user_selection.quit?
+      nil
+    else
+      retrieve_link items, user_selection
+    end
   end
 
   def get_items input
@@ -108,6 +166,8 @@ class Main
         @url_seeker.search_items keywords
       when 'main' then
         @url_seeker.main_items
+      when 'channels' then
+        @url_seeker.channel_items
       when 'best_ten' then
         @url_seeker.best_ten_items
       when 'popular' then
@@ -119,29 +179,16 @@ class Main
     end
   end
 
-  def retrieve_link items
-    @url_seeker.display_items items
-    puts "q. to exit"
+  def retrieve_link items, user_selection
+    media = @url_seeker.grab_media(items, user_selection, cookie)
 
-    link = nil
+    link = @url_seeker.mms_link(media)
 
-    if items.size > 0
-      title_number = read_title_number
-
-      unless title_number.quit?
-        media = @url_seeker.grab_media(items, title_number, cookie)
-
-        link = @url_seeker.mms_link(media)
-
-        if link.nil? and @url_seeker.session_expired?(media)
-          delete_cookie
-          @cookie = get_cookie
-          media = @url_seeker.grab_media items, title_number, cookie
-          link = @url_seeker.mms_link(media)
-        end
-        
-        puts "Cannot get movie link..." if link.nil?
-      end
+    if link.nil? and @url_seeker.session_expired?(media)
+      delete_cookie
+      @cookie = get_cookie
+      media = @url_seeker.grab_media items, user_selection, cookie
+      link = @url_seeker.mms_link(media)
     end
 
     link
@@ -173,7 +220,7 @@ class Main
     keywords
   end
 
-  def read_title_number
+  def read_user_selection
     input = ask("Select title number: ")
 
     unless ['q', 'Q'].include? input
@@ -182,7 +229,7 @@ class Main
       end
     end
 
-    TitleNumber.new input
+    UserSelection.new input
   end
 
   def get_cookie
