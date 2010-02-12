@@ -38,5 +38,9 @@ Gem::Specification.new do |s|
   s.add_dependency("nokogiri", ">= 1.4.1")
 
   s.add_development_dependency "rspec", ">= 1.2.9"
-  s.add_development_dependency "mocha", ">= 0.9.7"  
+  s.add_development_dependency "mocha", ">= 0.9.7"
+  s.add_development_dependency "metric_fu"
+  s.add_development_dependency "reek"
+  s.add_development_dependency "roodi"
+  s.add_development_dependency "googlecharts"
 end

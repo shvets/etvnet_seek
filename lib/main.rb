@@ -100,25 +100,23 @@ class Main
   end
 
   def get_items input
-    items = []
-
     case @mode
       when 'search' then
         keywords = read_keywords(input)
         puts "Keywords: #{keywords}"
 
-        items = @url_seeker.search_items keywords
+        @url_seeker.search_items keywords
       when 'main' then
-        items = @url_seeker.main_items
+        @url_seeker.main_items
       when 'best_ten' then
-        items = @url_seeker.best_ten_items
+        @url_seeker.best_ten_items
       when 'popular' then
-        items = @url_seeker.popular_items
+        @url_seeker.popular_items
       when 'we_recommend' then
-        items = @url_seeker.we_recommend_items
+        @url_seeker.we_recommend_items
+      else
+        []
     end
-
-    items
   end
 
   def retrieve_link items
@@ -169,7 +167,7 @@ class Main
     end
 
     if RUBY_PLATFORM =~ /mswin32/ or options[:runglish]
-      keywords = Runglish.new.lat_to_ru(keywords)
+      keywords = Runglish::LatToRusConverter.new.transliterate(keywords)
     end
 
     keywords

@@ -15,26 +15,31 @@ module ItemsHelper
           new_link = list.select {|l| l[:link] == href}.empty?
 
           if new_link
-            record = MediaItem.new(link.content.strip, href)
-            record.first_time = link.parent.parent.parent.css('td[1]').text.strip
-            record.year = link.parent.parent.next.next.content.strip
-
-            if href =~ /action=browse_container/
-              record.container = get_search_menu_items(href)
-            else
-              record.media_file = media_file(href)
-              record.english_name = english_name(href)
-              record.how_long = link.parent.parent.next.next.next.next.content.strip unless
-                link.parent.parent.next.next.next.next.nil?
-            end
-
-            list << record
+            list << create_new_media_item(link, href) if new_link
           end
         end
       end
     end
 
     list
+  end
+
+  def create_new_media_item link, href
+    record = MediaItem.new(link.content.strip, href)
+    
+    record.first_time = link.parent.parent.parent.css('td[1]').text.strip
+    record.year = link.parent.parent.next.next.content.strip
+
+    if href =~ /action=browse_container/
+      record.container = get_search_menu_items(href)
+    else
+      record.media_file = media_file(href)
+      record.english_name = english_name(href)
+      record.how_long = link.parent.parent.next.next.next.next.content.strip unless
+        link.parent.parent.next.next.next.next.nil?
+    end
+
+    record
   end
 
   def media_file href
@@ -55,8 +60,10 @@ module ItemsHelper
     list = []
 
     doc.css("#tblCategories a").each do |item|
-      list << { :text => item.css("img").at(0).attributes['alt'].value,
-                :link => item['href']}
+      text = item.css("img").at(0).attributes['alt'].value
+      href = item['href']
+
+      list << MediaItem.new(text, href)
     end
 
     list.delete_at(0)
@@ -76,7 +83,7 @@ module ItemsHelper
     get_typical_items(doc, "#tbl10best")
   end
 
-  def get_we_recommend url
+  def get_we_recommend_items url
     doc = Nokogiri::HTML(open(url))
 
     get_typical_items(doc, "#tblfree")
@@ -91,15 +98,17 @@ module ItemsHelper
       link = table.css("a").at(0)
 
       unless link.nil?
-        href = link.attributes['href'].value
-        record = { :text => link.children.at(0).content, :link => href }
 
-        record[:media_file] = media_file(href)
-        record[:english_name] = english_name(href)
+        href = link.attributes['href'].value
+
+        record = MediaItem.new(link.children.at(0).content, href)
+
+        record.media_file = media_file(href)
+        record.english_name = english_name(href)
 
         additional_info = additional_info(link, 1)
 
-        record[:text] += additional_info unless additional_info.nil?
+        record.text += additional_info unless additional_info.nil?
 
         list << record
       end
