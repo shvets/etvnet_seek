@@ -21,6 +21,8 @@ module ItemsHelper
         else
           record.duration = item.parent.parent.next.next.next.next.content.strip unless
             item.parent.parent.next.next.next.next.nil?
+  #        record.stars = ""
+  #        record.rating = ""
         end
 
         list << record
@@ -30,29 +32,6 @@ module ItemsHelper
     list
   end
 
-#  def get_today_items url
-#    doc = Nokogiri::HTML(open(url))
-#
-#    list = []
-#
-##    doc.css("table tr[2] td table tr td table tr[2] td[2] table tr").each do |item|
-#    doc.css("table tr[2] td table").each do |item|
-#      links = item.css(".media_file")
-#
-#      links.each_with_index do |link, index|
-#        if index % 2 != 0
-#          record = MediaItem.new(link.content.strip, link.attributes['href'].value)
-#          record.showtime = link.parent.parent.previous.previous.previous.previous.content.strip,
-#          record.year = link.parent.parent.next.next.content.strip,
-#          record.duration = link.parent.parent.next.next.next.next.content.strip
-#
-#          list << record
-#        end
-#      end
-#    end
-#
-#    list
-#  end
 
 #  def get_archive_items url
 #    doc = Nokogiri::HTML(open(url))

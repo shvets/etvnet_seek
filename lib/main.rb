@@ -19,21 +19,19 @@ class Main
   def initialize
     @cookie = get_cookie
 
-    @url_seeker = UrlSeeker.new
-
     @commander = Commander.new
+
+    @url_seeker = UrlSeeker.new
   end
 
   def seek *params
     if @commander.search_mode?
-      new_params = read_keywords(*params)
+      params = read_keywords(*params)
       
-      puts "Keywords: #{new_params}" if @commander.runglish_mode?
-    else
-      new_params = params
+      puts "Keywords: #{params}" if @commander.runglish_mode?
     end
 
-    items = @url_seeker.get_items(@commander.mode, *new_params)
+    items = @url_seeker.get_items(@commander.mode, *params)
 
     @url_seeker.display_items items
     puts "<number> => today; <number>.a => archive" if @commander.channels_mode?
@@ -63,7 +61,7 @@ class Main
               nil
           end
 
-          result = seek(link)
+          link_info = seek(link)
 
         elsif @commander.channels_mode?
           if user_selection.archive?
@@ -72,28 +70,28 @@ class Main
             @commander.mode = 'today'
           end
 
-          result = seek(items[user_selection.index1].channel)
+          link_info = seek(items[user_selection.index1].channel)
         else
-          result = retrieve_link items, user_selection
+          link_info = retrieve_link items, user_selection
         end
 
-        puts "Cannot get movie link..." if link.nil?
+        puts "Cannot get movie link..." if link_info.link.nil?
 
-        result
+        link_info
       end
     end
   end
 
   def retrieve_link items, user_selection
-    result = @url_seeker.grab_media(items, user_selection, cookie)
+    link_info = @url_seeker.collect_link_info(items, user_selection, cookie)
 
-    if result.link.nil? and @url_seeker.session_expired?(media)
+    if link_info.link.nil? and link_info.session_expired?
       delete_cookie
       @cookie = get_cookie
-      result = @url_seeker.grab_media items, user_selection, cookie
+      link_info = @url_seeker.collect_link_info(items, user_selection, cookie)
     end
 
-    result
+    link_info
   end
 
   def launch_link link
