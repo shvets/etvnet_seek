@@ -1,8 +1,10 @@
 class LinkInfo
-  attr_reader :name, :link
+  attr_reader :name, :text, :media_file, :link
 
-  def initialize(name = '', link = '', session_expired = true)
+  def initialize(name = '', text = '', media_file = '', link = '', session_expired = true)
     @name = name
+    @text = text
+    @media_file = media_file
     @link = link
     @session_expired = session_expired
   end
@@ -18,11 +20,10 @@ class LinkInfo
   def self.extract(item, url, cookie)
     media_info = request_media_info(url, item.media_file, cookie)
 
-    name = item.underscore_name
     link = JSON.parse(media_info)["PARAMETERS"]["REDIRECT_URL"]
     session_expired = (JSON.parse(media_info)["PARAMETERS"]["error_session_expire"] == 1)
 
-    LinkInfo.new(name, link, session_expired)
+    LinkInfo.new(item.underscore_name, item.text, item.media_file, link, session_expired)
   end
 
   private

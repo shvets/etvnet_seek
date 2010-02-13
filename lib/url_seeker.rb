@@ -39,7 +39,7 @@ class UrlSeeker
       when 'today' then
         get_menu_items "#{TODAY_URL}&channel=#{params[0]}"
       when 'archive' then
-        get_menu_items "#{BROWSE_URL}?channel=#{patams[0]}"
+        get_menu_items "#{BROWSE_URL}?channel=#{params[0]}"
       when 'announces' then
         get_menu_items "#{BASE_URL}#{params[0]}"
       when 'freetv' then

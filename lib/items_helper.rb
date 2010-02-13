@@ -1,12 +1,14 @@
 require 'media_item'
 
 module ItemsHelper
-  def get_menu_items url
-    doc = Nokogiri::HTML(open(url))
+  def get_document(url)
+    Nokogiri::HTML(open(url))
+  end
 
+  def get_menu_items url
     list = []
 
-    doc.css("b a.media_file").each do |item|
+    get_document(url).css("b a.media_file").each do |item|
       link = item.attributes['href'].value
       new_link = list.select {|l| l.link == link}.empty?
 
@@ -18,7 +20,6 @@ module ItemsHelper
 
         if link =~ /action=browse_container/
           record.container = true
-          #record.container = get_menu_items(link)
         else
           record.duration = item.parent.parent.next.next.next.next.content.strip unless
             item.parent.parent.next.next.next.next.nil?
@@ -84,12 +85,9 @@ module ItemsHelper
 #  end
 
   def get_announce_items url
-    doc = Nokogiri::HTML(open(url))
-
     list = []
 
-    i = 0
-    doc.css("table tr td div").each do |item|
+    get_document(url).css("table tr td div").each do |item|
       unless item.css("a").at(0).nil?
         list << { :text => item.css("img").at(0).attributes['alt'].value.strip,
                   :link =>  item.css("a").at(0).attributes['href'].value}
@@ -100,11 +98,9 @@ module ItemsHelper
   end
 
   def get_freetv_items url
-    doc = Nokogiri::HTML(open(url))
-
     list = []
 
-    doc.css("table tr td table tr td table tr td div table tr").each_with_index do |item, index|
+    get_document(url).css("table tr td table tr td table tr td div table tr").each_with_index do |item, index|
       #next if index < 1
       node = item.css("td img")
       if node.size > 0
@@ -124,11 +120,9 @@ module ItemsHelper
   end
   
   def get_main_menu_items url
-    doc = Nokogiri::HTML(open(url))
-
     list = []
 
-    doc.css("#tblCategories a").each do |item|
+    get_document(url).css("#tblCategories a").each do |item|
       text = item.css("img").at(0).attributes['alt'].value
       href = item['href']
 
@@ -141,21 +135,15 @@ module ItemsHelper
   end
 
   def get_best_ten_items url
-    doc = Nokogiri::HTML(open(url))
-
-    get_typical_items(doc, "#tbl10best")
+    get_typical_items(url, "#tbl10best")
   end
 
   def get_popular_items url
-    doc = Nokogiri::HTML(open(url))
-
-    get_typical_items(doc, "#tblyearago")
+    get_typical_items(url, "#tblyearago")
   end
 
   def get_we_recommend_items url
-    doc = Nokogiri::HTML(open(url))
-
-    items = get_typical_items(doc, "#tblfree")
+    items = get_typical_items(url, "#tblfree")
 
     more_recommended_item = items.delete_at(items.size-1)
 
@@ -165,11 +153,9 @@ module ItemsHelper
   end
 
   def get_channel_items url
-    doc = Nokogiri::HTML(open(url))
-
     list = []
 
-    doc.css("table table table.rounded_white table tr").each_with_index do |item, index|
+    get_document(url).css("table table table.rounded_white table tr").each_with_index do |item, index|
       links = item.css("table tr td a")
 
       text = item.children.at(0).text.strip
@@ -200,10 +186,10 @@ module ItemsHelper
 
   private
 
-  def get_typical_items doc, tag_name
+  def get_typical_items url, tag_name
     list = []
 
-    doc.css(tag_name).at(0).next.children.each do |table|
+    get_document(url).css(tag_name).at(0).next.children.each do |table|
       href = table.css("a").at(0)
 
       unless href.nil?

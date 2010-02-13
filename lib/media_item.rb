@@ -1,5 +1,5 @@
 class MediaItem
-  attr_accessor :text, :link
+  attr_reader :text, :link
 
   def initialize(text, link)
     @text = text
@@ -29,6 +29,7 @@ end
 
 class BrowseMediaItem < MediaItem
   attr_accessor :container, :showtime, :starts, :rating, :info_link, :year, :duration
+  attr_reader :underscore_name, :media_file
 
   def initialize(text, link)
     super(text, link)
@@ -41,19 +42,16 @@ class BrowseMediaItem < MediaItem
     not self.container.nil?
   end
 
-  def underscore_name
-    container? ? 'Folder'  : @underscore_name
-  end
-
-  def media_file
-    @media_file
-  end
-
   def to_s
-    buffer = "#{underscore_name}"
-    buffer += " (#{media_file})" if not media_file.nil? and media_file.size > 0
-    buffer += ": #{text}"
+    if container?
+      buffer = "**********Folder "
+    else
+      buffer = ""
+    end
 
+    buffer += "#{text} : #{underscore_name}"
+
+    buffer += " (#{media_file})" if not media_file.nil? and media_file.size > 0
     buffer += " --- #{year}" if not year.nil? and year.size > 0
     buffer += " --- #{duration}" if not duration.nil? and duration.size > 0
 

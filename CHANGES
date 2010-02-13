@@ -12,3 +12,7 @@
 == Version 0.3.0
 
 * Bug fixes, support for Runglish (you can enter russian string as latin one)
+
+== Version 0.4.0
+
+* Bug fixes, adding support for main menu

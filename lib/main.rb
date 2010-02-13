@@ -56,6 +56,7 @@ class Main
               @commander.mode = 'category'
             when /action=channels/
               @commander.mode = 'channels'
+            puts "************"
             else
               LinkInfo.new
           end
@@ -68,7 +69,7 @@ class Main
           else
             @commander.mode = 'today'
           end
-
+          p "in archive #{current_item.channel}"
           link_info = seek(current_item.channel)
         else
           if current_item.container

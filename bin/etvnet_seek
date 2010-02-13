@@ -16,7 +16,7 @@ client = Main.new
 link_info = client.seek ARGV.join(' ')
 
 if link_info.resolved?
-  puts "Link (#{link_info.name}): #{link_info.link}"
+  puts "Link #{link_info.text} [#{link_info.name} (#{link_info.media_file})]: #{link_info.link}"
 
   launch = ask("Launch link (y/n)?")
 
