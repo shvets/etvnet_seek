@@ -17,7 +17,8 @@ module ItemsHelper
         record.year = item.parent.parent.next.next.content.strip
 
         if link =~ /action=browse_container/
-          record.container = get_menu_items(link)
+          record.container = true
+          #record.container = get_menu_items(link)
         else
           record.duration = item.parent.parent.next.next.next.next.content.strip unless
             item.parent.parent.next.next.next.next.nil?

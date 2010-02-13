@@ -13,6 +13,10 @@ class UserSelection
     @quit
   end
 
+  def blank?
+    @blank
+  end
+
   def archive?
     @archive
   end
@@ -25,6 +29,7 @@ class UserSelection
 
   def parse text
     @quit = (['q', 'Q'].include? text) ? true : false
+    @blank = text.strip.size == 0
 
     dot_index = text.index('.')
 

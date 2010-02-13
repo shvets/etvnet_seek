@@ -5,7 +5,7 @@ require 'json'
 
 require 'items_helper'
 require 'user_selection'
-require 'link_extractor'
+require 'link_info'
 
 class UrlSeeker
   include ItemsHelper
@@ -24,6 +24,8 @@ class UrlSeeker
         search_url = "#{SEARCH_URL}&keywords=#{CGI.escape(*params)}&order_direction=#{params[1]}"
 
         get_menu_items search_url
+      when 'container' then
+        get_menu_items *params
       when 'main' then
         get_main_menu_items BASE_URL
       when 'channels' then
@@ -55,11 +57,11 @@ class UrlSeeker
     else
       items.each_with_index do |item1, index1|
         if item1.container?
-          puts "#{index1+1}. #{item1.text}"
+          puts "#{index1+1}. #{item1}"
 
-          item1.container.each_with_index do |item2, index2|
-            puts "  #{index1+1}.#{index2+1}. #{item2}"
-          end
+#          item1.container.each_with_index do |item2, index2|
+#            puts "  #{index1+1}.#{index2+1}. #{item2}"
+#          end
         else
           puts "#{index1+1}. #{item1}"
         end
@@ -68,7 +70,7 @@ class UrlSeeker
   end
 
   def collect_link_info items, user_selection, cookie
-    LinkExtractor.new(user_selection.item(items)).request(ACCESS_URL, cookie)
+    LinkInfo.extract(user_selection.item(items), ACCESS_URL, cookie)
   end
 
 end

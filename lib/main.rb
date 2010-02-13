@@ -33,9 +33,8 @@ class Main
 
     items = @url_seeker.get_items(@commander.mode, *params)
 
-    @url_seeker.display_items items
-    puts "<number> => today; <number>.a => archive" if @commander.channels_mode?
-    puts "q. to exit"
+    @url_seeker.display_items items   
+    display_bottom_menu_part
 
     if items.size == 0
       nil
@@ -43,12 +42,12 @@ class Main
       user_selection = read_user_selection items
 
       if user_selection.quit?
-        nil
+        LinkInfo.new
       else
-        if @commander.main_menu_mode?
-          link = items[user_selection.index1].link
+        current_item = items[user_selection.index1]
 
-          case link
+        if @commander.main_menu_mode?
+          case current_item.link
             when /announces.html/ then
               @commander.mode = 'announces'
             when /freeTV.html/ then
@@ -58,10 +57,10 @@ class Main
             when /action=channels/
               @commander.mode = 'channels'
             else
-              nil
+              LinkInfo.new
           end
 
-          link_info = seek(link)
+          link_info = seek(current_item.link)
 
         elsif @commander.channels_mode?
           if user_selection.archive?
@@ -70,16 +69,26 @@ class Main
             @commander.mode = 'today'
           end
 
-          link_info = seek(items[user_selection.index1].channel)
+          link_info = seek(current_item.channel)
         else
-          link_info = retrieve_link items, user_selection
+          if current_item.container
+            @commander.mode = 'container'
+            link_info = seek(current_item.link)
+          else
+            link_info = retrieve_link items, user_selection
+          end
         end
 
-        puts "Cannot get movie link..." if link_info.link.nil?
+        puts "Cannot get movie link..." unless link_info.resolved?
 
         link_info
       end
     end
+  end
+
+  def display_bottom_menu_part
+    puts "<number> => today; <number>.a => archive" if @commander.channels_mode?
+    puts "q. to exit"
   end
 
   def retrieve_link items, user_selection
@@ -122,12 +131,14 @@ class Main
 
   def read_user_selection items
     while true
-      user_selection = UserSelection.new ask("Select title number: ")
-
-      if user_selection.quit? or user_selection.index1 < items.size
-        return user_selection
-      else
-        puts "Selection is out of range: [1..#{items.size}]"
+      user_selection = UserSelection.new ask("Select the number: ")
+      
+      if not user_selection.blank?
+        if user_selection.quit? or user_selection.index1 < items.size
+          return user_selection
+        else
+          puts "Selection is out of range: [1..#{items.size}]"
+        end
       end
     end
   end
