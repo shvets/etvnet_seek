@@ -1,10 +1,10 @@
 class Commander
   attr_accessor :mode
-
+  
   def initialize
-    parse_options
+    @options = parse_options
     
-    @mode = get_mode
+    @mode = get_mode @options
   end
 
   def search_mode?
@@ -29,41 +29,46 @@ class Commander
     # This hash will hold all of the options
     # parsed from the command-line by
     # OptionParser.
-    @options = {}
+    options = {}
 
     optparse = OptionParser.new do|opts|
       # Set a banner, displayed at the top
       # of the help screen.
       opts.banner = "Usage: etvnet_seek [options] keywords"
 
-      @options[:runglish] = false
+      options[:search] = false
+      opts.on( '-s', '--search', 'Display Search Menu' ) do
+        options[:search] = true
+      end
+
+      options[:runglish] = false
       opts.on( '-r', '--runglish', 'Enter russian keywords in translit' ) do
-        @options[:runglish] = true
+        options[:runglish] = true
       end
 
-      @options[:main_menu] = false
+      options[:main] = false
       opts.on( '-m', '--main', 'Display Main Menu' ) do
-        @options[:main_menu] = true
+        options[:main] = true
       end
 
-      @options[:best_ten] = false
+      options[:best_ten] = false
       opts.on( '-b', '--best-ten', 'Display Best 10 Menu' ) do
-        @options[:best_ten] = true
+        options[:best_ten] = true
       end
 
-      @options[:popular] = false
+      options[:popular] = false
       opts.on( '-p', '--popular', 'Display Popular Menu' ) do
-        @options[:popular] = true
+        options[:popular] = true
       end
 
-      @options[:we_recommend] = false
+      options[:we_recommend] = false
       opts.on( '-w', '--we-recommend', 'Display We recommend Menu' ) do
-        @options[:we_recommend] = true
+        options[:we_recommend] = true
       end
 
-      @options[:channels] = false
+      options[:channels] = false
       opts.on( '-c', '--channels', 'Display Channels Menu' ) do
-        @options[:channels] = true
+        options[:channels] = true
       end
 
       # This displays the help screen, all programs are
@@ -75,24 +80,24 @@ class Commander
     end
 
     optparse.parse!
+
+    options
   end
 
-  def get_mode
-    mode = 'search'
-
-    if @options[:main] == true
-      mode = 'main'
-    elsif @options[:best_ten] == true
-      mode = 'best_ten'
-    elsif @options[:popular] == true
-      mode = 'popular'
-    elsif @options[:we_recommend] == true
-      mode = 'we_recommend'
-    elsif @options[:channels] == true
-      mode = 'channels'
+  def get_mode options
+    if options[:search] == true
+      'search'
+    elsif options[:best_ten] == true
+      'best_ten'
+    elsif options[:popular] == true
+      'popular'
+    elsif options[:we_recommend] == true
+      'we_recommend'
+    elsif options[:channels] == true
+      'channels'
+    else
+      'main'
     end
-
-    mode
   end
 
 end

@@ -26,14 +26,14 @@ class Main
 
   def seek *params
     if @commander.search_mode?
-      input = read_keywords(*params)
+      new_params = read_keywords(*params)
       
-      puts "Keywords: #{input}" if @commander.runglish_mode?
-
-      items = @url_seeker.get_items(@commander.mode, input)
+      puts "Keywords: #{new_params}" if @commander.runglish_mode?
     else
-      items = @url_seeker.get_items(@commander.mode, *params)
+      new_params = params
     end
+
+    items = @url_seeker.get_items(@commander.mode, *new_params)
 
     @url_seeker.display_items items
     puts "<number> => today; <number>.a => archive" if @commander.channels_mode?
@@ -48,38 +48,52 @@ class Main
         nil
       else
         if @commander.main_menu_mode?
-          #
+          link = items[user_selection.index1].link
+
+          case link
+            when /announces.html/ then
+              @commander.mode = 'announces'
+            when /freeTV.html/ then
+              @commander.mode = 'freetv'
+            when /category=/
+              @commander.mode = 'category'
+            when /action=channels/
+              @commander.mode = 'channels'
+            else
+              nil
+          end
+
+          result = seek(link)
+
         elsif @commander.channels_mode?
           if user_selection.archive?
             @commander.mode = 'archive'
-            link, english_name = seek(items[user_selection.index1].channel)
           else
             @commander.mode = 'today'
-            link, english_name = seek(items[user_selection.index1].channel)
           end
+
+          result = seek(items[user_selection.index1].channel)
         else
-          link, english_name = retrieve_link items, user_selection
+          result = retrieve_link items, user_selection
         end
 
         puts "Cannot get movie link..." if link.nil?
 
-        [link, english_name]
+        result
       end
     end
   end
 
   def retrieve_link items, user_selection
-    media, english_name = @url_seeker.grab_media(items, user_selection, cookie)
-    link = @url_seeker.mms_link(media)
+    result = @url_seeker.grab_media(items, user_selection, cookie)
 
-    if link.nil? and @url_seeker.session_expired?(media)
+    if result.link.nil? and @url_seeker.session_expired?(media)
       delete_cookie
       @cookie = get_cookie
-      media, english_name = @url_seeker.grab_media items, user_selection, cookie
-      link = @url_seeker.mms_link(media)
+      result = @url_seeker.grab_media items, user_selection, cookie
     end
 
-    [link, english_name]
+    result
   end
 
   def launch_link link

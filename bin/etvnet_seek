@@ -13,11 +13,13 @@ trap('INT') { puts "Program was interrupted..."; exit }
 
 client = Main.new
 
-link, english_name = client.seek ARGV.join(' ')
+result = client.seek ARGV.join(' ')
 
-if link
-  puts "Link (#{english_name}): #{link}"
-  
-  client.launch_link link
+if result.resolved?
+  puts "Link (#{result.name}): #{result.link}"
+
+  launch = ask("Launch link (y/n)?")
+
+  client.launch_link result.link unless launch =~ /n/i
 end
 

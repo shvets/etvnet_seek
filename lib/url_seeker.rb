@@ -5,6 +5,7 @@ require 'json'
 
 require 'items_helper'
 require 'user_selection'
+require 'search_result'
 
 class UrlSeeker
   include ItemsHelper
@@ -34,8 +35,13 @@ class UrlSeeker
       when 'today' then
         today_items *params
       when 'archive' then
-        p "1"
         archive_items *params
+      when 'announces' then
+        get_menu_items "#{BASE_URL}#{params[0]}"
+      when 'freetv' then
+        get_freetv_items "#{BASE_URL}#{params[0]}"
+      when 'category' then
+        get_menu_items "#{BASE_URL}#{params[0]}"
       else
         []
     end
@@ -64,7 +70,7 @@ class UrlSeeker
                                      items[title_number.index1].container[title_number.index2]
     media = request_media_info(item.media_file, cookie)
 
-    [media, item.english_name]
+    SearchResult.new(mms_link(media), item.english_name)
   end
 
   def mms_link media_info

@@ -102,6 +102,46 @@ module ItemsHelper
 #
 #    list
 #  end
+
+  def get_announce_items url
+    doc = Nokogiri::HTML(open(url))
+
+    list = []
+
+    i = 0
+    doc.css("table tr td div").each do |item|
+      unless item.css("a").at(0).nil?
+        list << { :text => item.css("img").at(0).attributes['alt'].value.strip,
+                  :link =>  item.css("a").at(0).attributes['href'].value}
+      end
+    end
+
+    list
+  end
+
+  def get_freetv_items url
+    doc = Nokogiri::HTML(open(url))
+
+    list = []
+
+    doc.css("table tr td table tr td table tr td div table tr").each_with_index do |item, index|
+      #next if index < 1
+      node = item.css("td img")
+      if node.size > 0
+        text = node.at(0).parent.css("a")
+        unless text.to_s.size == 0
+          link = node.at(0).parent.css("a")
+          record = { :text => link.at(0).text,
+                     :link => link.at(0).attributes['href'].value.strip,
+                     :rating_image => node.at(0).attributes['src'] }
+
+          list << record
+        end
+      end
+    end
+
+    list
+  end
   
   def get_main_menu_items url
     doc = Nokogiri::HTML(open(url))
@@ -192,9 +232,6 @@ module ItemsHelper
         record = BrowseMediaItem.new(href.children.at(0).content, link)
 
         if link =~ /media/
-#          record.media_file = media_file(href)
-#          record.english_name = english_name(href)
-
           additional_info = additional_info(href, 1)
 
           record.text += additional_info unless additional_info.nil?
