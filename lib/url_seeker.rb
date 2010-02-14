@@ -4,8 +4,6 @@ require 'cgi'
 require 'json'
 
 require 'items_helper'
-require 'user_selection'
-require 'link_info'
 
 class UrlSeeker
   include ItemsHelper
@@ -67,10 +65,6 @@ class UrlSeeker
         end
       end
     end
-  end
-
-  def collect_link_info items, user_selection, cookie
-    LinkInfo.extract(user_selection.item(items), ACCESS_URL, cookie)
   end
 
 end

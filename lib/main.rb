@@ -6,18 +6,23 @@ require 'optparse'
 
 require 'cookie_helper'
 require 'url_seeker'
+require 'user_selection'
+require 'media_info'
+require 'link_info'
 require 'commander'
 require 'runglish'
 
 class Main
-  include CookieHelper
 
   COOKIE_FILE_NAME = ENV['HOME'] + "/.etvnet-seek"
 
-  attr_reader :cookie
-
   def initialize
-    @cookie = get_cookie
+    @cookie_helper = CookieHelper.new COOKIE_FILE_NAME do
+      username = ask("Enter username :  " )
+      password = ask("Enter password : " ) { |q| q.echo = '*' }
+
+      [username, password]
+    end
 
     @commander = Commander.new
 
@@ -42,9 +47,9 @@ class Main
       user_selection = read_user_selection items
 
       if user_selection.quit?
-        LinkInfo.new
+        nil
       else
-        current_item = items[user_selection.index1]
+        current_item = user_selection.item(items)
 
         if @commander.main_menu_mode?
           case current_item.link
@@ -58,7 +63,7 @@ class Main
               @commander.mode = 'channels'
             puts "************"
             else
-              LinkInfo.new
+              nil
           end
 
           link_info = seek(current_item.link)
@@ -76,11 +81,14 @@ class Main
             @commander.mode = 'container'
             link_info = seek(current_item.link)
           else
-            link_info = retrieve_link items, user_selection
+            media_info = request_media_info current_item.media_file
+
+            link_info = LinkInfo.new(current_item.underscore_name, current_item.text, current_item.media_file,
+                                     media_info.link, media_info.session_expired?)
           end
         end
 
-        puts "Cannot get movie link..." unless link_info.resolved?
+        #puts "Cannot get movie link..." unless link_info.nil?
 
         link_info
       end
@@ -92,18 +100,17 @@ class Main
     puts "q. to exit"
   end
 
-  def retrieve_link items, user_selection
-    link_info = @url_seeker.collect_link_info(items, user_selection, cookie)
+  def request_media_info media_file
+    media_info = MediaInfo.request_media_info(UrlSeeker::ACCESS_URL, media_file, @cookie_helper.cookie)
 
-    if link_info.link.nil? and link_info.session_expired?
-      delete_cookie
-      @cookie = get_cookie
-      link_info = @url_seeker.collect_link_info(items, user_selection, cookie)
+    if media_info.session_expired?
+      @cookie_helper.renew_cookie
+      media_info = MediaInfo.request_media_info(UrlSeeker::ACCESS_URL, media_file, @cookie_helper.cookie)
     end
 
-    link_info
+    media_info
   end
-
+  
   def launch_link link
     if RUBY_PLATFORM =~ /(win|w)32$/
       `start wmplayer #{link}`
@@ -144,30 +151,4 @@ class Main
     end
   end
 
-  def get_cookie
-    if File.exist? COOKIE_FILE_NAME
-      cookie = read_cookie COOKIE_FILE_NAME
-    else
-      username = ask("Enter username :  " )
-      password = ask("Enter password : " ) { |q| q.echo = '*' }
-
-      cookie = retrieve_cookie UrlSeeker::LOGIN_URL, username, password
-
-      write_cookie COOKIE_FILE_NAME, cookie
-   end
-
-    cookie
-  end
-
-  def delete_cookie
-    File.delete COOKIE_FILE_NAME if File.exist? COOKIE_FILE_NAME
-  end
-
-  def read_cookie file_name
-    File.open(file_name, 'r') { |file| file.gets }
-  end
-
-  def write_cookie file_name, cookie
-    File.open(file_name, 'w') { |file| file.puts cookie }
-  end
 end

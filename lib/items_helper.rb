@@ -161,23 +161,19 @@ module ItemsHelper
       text = item.children.at(0).text.strip
 
       if text.size > 0
-        record = ChannelMediaItem.new(text)
+        link = nil
+        archive_link = nil
 
         if links.size > 0
-          link = links[0]
+          href = links[0]
+          archive_href = links[1]
 
-          unless link.nil?
-            record.link = link.attributes['href'].value
-          end
+          link = href.attributes['href'].value unless href.nil?
 
-          archive_link = links[1]
-
-          unless archive_link.nil?
-            record.archive_link = archive_link.attributes['href'].value
-          end
+          archive_link = archive_href.attributes['href'].value unless archive_href.nil?
         end
 
-        list << record
+        list << ChannelMediaItem.new(text, link, archive_link)
       end
     end
 
@@ -194,14 +190,15 @@ module ItemsHelper
 
       unless href.nil?
         link = href.attributes['href'].value
-
-        record = BrowseMediaItem.new(href.children.at(0).content, link)
+        text = href.children.at(0).content
 
         if link =~ /media/
           additional_info = additional_info(href, 1)
 
-          record.text += additional_info unless additional_info.nil?
+          text += additional_info unless additional_info.nil?
         end
+
+        record = BrowseMediaItem.new(text, link)
 
         list << record
       end

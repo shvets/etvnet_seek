@@ -16,10 +16,12 @@ class MediaItem
 end
 
 class ChannelMediaItem < MediaItem
-  attr_accessor :archive_link
+  attr_reader :archive_link
 
-  def initialize(text)
-    super(text, nil)
+  def initialize(text, link, archive_link)
+    super(text, link)
+
+    @archive_link = link
   end
 
   def channel

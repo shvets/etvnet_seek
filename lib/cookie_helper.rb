@@ -1,7 +1,49 @@
 require 'net/http'
 require 'uri'
 
-module CookieHelper
+class CookieHelper
+  attr_reader :cookie
+  
+  def initialize cookie_file_name, &block
+    @cookie_file_name = cookie_file_name
+    @request_credentials = block
+
+    @cookie = get_cookie
+  end
+
+  def get_cookie
+    if File.exist? @cookie_file_name
+      cookie = read_cookie
+    else
+      username, password = @request_credentials.call
+
+      cookie = retrieve_cookie UrlSeeker::LOGIN_URL, username, password
+
+      write_cookie cookie
+   end
+
+    cookie
+  end
+
+  def renew_cookie
+    delete_cookie
+    @cookie = @cookie_helper.get_cookie
+  end
+
+  private
+
+  def delete_cookie
+    File.delete @cookie_file_name if File.exist? @cookie_file_name
+  end
+  
+  def read_cookie
+    File.open(@cookie_file_name, 'r') { |file| file.gets }
+  end
+
+  def write_cookie cookie
+    File.open(@cookie_file_name, 'w') { |file| file.puts cookie }
+  end
+
   def retrieve_cookie url, username, password
     uri = URI.parse(url)
     conn = Net::HTTP.new(uri.host, uri.port)
@@ -14,8 +56,6 @@ module CookieHelper
 
     cleanup_cookie(cookie)
   end
-
-  private
   
   def cleanup_cookie cookie
     auth, expires = get_auth_and_expires(cookie)
