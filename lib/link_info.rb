@@ -1,20 +1,33 @@
 class LinkInfo
-  attr_reader :name, :text, :media_file, :link
+  attr_reader :media_item, :media_info
 
-  def initialize(name = '', text = '', media_file = '', link = '', session_expired = true)
-    @name = name
-    @text = text
-    @media_file = media_file
-    @link = link
-    @session_expired = session_expired
+  def initialize(media_item, media_info)
+    @media_item = media_item
+    @media_info = media_info
   end
 
   def resolved?
-    not @link.nil? and not @link.strip.size == 0
+    not @media_info.link.nil? and not @media_info.link.strip.size == 0
   end
 
   def session_expired?
-    @session_expired
+    @media_info.session_expired
+  end
+
+  def text
+    media_item.text
+  end
+
+  def name
+    media_item.underscore_name
+  end
+
+  def media_file
+    media_item.media_file
+  end
+
+  def link
+    media_info.link
   end
 
 end

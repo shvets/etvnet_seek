@@ -4,23 +4,40 @@ class Commander
   def initialize
     @options = parse_options
     
-    @mode = get_mode @options
+#    @mode = get_mode @options
   end
 
   def search_mode?
-    @mode == 'search'
+    @options[:runglish]
   end
-
-  def main_menu_mode?
-    @mode == 'main'
-  end
-
-  def channels_mode?
-    @mode == 'channels'
-  end
+#
+#  def main_menu_mode?
+#    @mode == 'main'
+#  end
+#
+#  def channels_mode?
+#    @mode == 'channels'
+#  end
 
   def runglish_mode?
     @options[:runglish]
+  end
+
+
+  def get_initial_mode
+    if @options[:search] == true
+      'search'
+    elsif @options[:best_ten] == true
+      'best_ten'
+    elsif @options[:popular] == true
+      'popular'
+    elsif @options[:we_recommend] == true
+      'we_recommend'
+    elsif @options[:channels] == true
+      'channels'
+    else
+      'main'
+    end
   end
 
   private
@@ -82,22 +99,6 @@ class Commander
     optparse.parse!
 
     options
-  end
-
-  def get_mode options
-    if options[:search] == true
-      'search'
-    elsif options[:best_ten] == true
-      'best_ten'
-    elsif options[:popular] == true
-      'popular'
-    elsif options[:we_recommend] == true
-      'we_recommend'
-    elsif options[:channels] == true
-      'channels'
-    else
-      'main'
-    end
   end
 
 end

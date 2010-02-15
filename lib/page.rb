@@ -332,6 +332,8 @@ class PageFactory
         page = FreetvPage.new url
       when 'category' then
         page = MediaPage.new url
+      when 'media' then
+        page = MediaPage.new url
       else
         page = nil
     end

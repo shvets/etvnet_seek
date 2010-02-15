@@ -33,58 +33,49 @@ class Main
       puts "Keywords: #{params}" if @commander.runglish_mode?
     end
 
-    page = PageFactory.create(@commander.mode, params)
+    process @commander.get_initial_mode, params
+  end
+
+  def process mode, *params
+    page = PageFactory.create(mode, params)
     items = page.get_items
 
     if items.size == 0
       nil
     else
       display_items items
-      display_bottom_menu_part
+      display_bottom_menu_part(mode)
 
       user_selection = read_user_selection items
 
-      if user_selection.quit?
-        nil
-      else
+      if not user_selection.quit?
         current_item = user_selection.item(items)
 
-        if @commander.main_menu_mode?
+        if mode == 'main'
           case current_item.link
             when /announces.html/ then
-              @commander.mode = 'announces'
+              process('announces', current_item.link)
             when /freeTV.html/ then
-              @commander.mode = 'freetv'
+              process('freetv', current_item.link)
             when /category=/
-              @commander.mode = 'category'
+              process('category', current_item.link)
             when /action=channels/
-              @commander.mode = 'channels'
-            else
-              nil
+              process('channels', current_item.link)
           end
-
-          link_info = seek(current_item.link)
-
-        elsif @commander.channels_mode?
+        elsif mode == 'channels'
           if user_selection.archive?
-            @commander.mode = 'archive'
+            process('archive', current_item.link)
           else
-            @commander.mode = 'today'
+            process('today', current_item.link)
           end
-
-          link_info = seek(current_item.link)
-        else
+        else # media : announces, freetv, category
           if current_item.folder?
-            @commander.mode = 'folder'
-            link_info = seek(current_item.link)
+            process('folder', current_item.link)
           else
             media_info = request_media_info(current_item.media_file)
-
-            link_info = LinkInfo.new(current_item.underscore_name, current_item.text, current_item.media_file, media_info.link, media_info.session_expired?)
+            LinkInfo.new(current_item, media_info)
           end
         end
-
-        link_info
       end
     end
   end
@@ -99,8 +90,8 @@ class Main
     end
   end
 
-  def display_bottom_menu_part
-    puts "<number> => today; <number>.a => archive" if @commander.channels_mode?
+  def display_bottom_menu_part mode
+    puts "<number> => today; <number>.a => archive" if mode == 'channels'
     puts "q. to exit"
   end
 
