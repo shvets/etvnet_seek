@@ -8,13 +8,13 @@ require 'runglish'
 describe UrlSeeker do
 
   before :each do
-    @client = UrlSeeker.new
+    @client = Main.new
   end
 
   it "should return search menu items" do
     keywords = "красная шапочка"
 
-    items = @client.search_items(keywords)
+    items = @client.seek(keywords)
     @client.display_items items
   end
 

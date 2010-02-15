@@ -5,15 +5,14 @@ require "highline/import"
 require 'optparse'
 
 require 'cookie_helper'
-require 'url_seeker'
 require 'user_selection'
 require 'media_info'
 require 'link_info'
+require 'page'
 require 'commander'
 require 'runglish'
 
 class Main
-
   COOKIE_FILE_NAME = ENV['HOME'] + "/.etvnet-seek"
 
   def initialize
@@ -25,8 +24,6 @@ class Main
     end
 
     @commander = Commander.new
-
-    @url_seeker = UrlSeeker.new
   end
 
   def seek *params
@@ -36,14 +33,15 @@ class Main
       puts "Keywords: #{params}" if @commander.runglish_mode?
     end
 
-    items = @url_seeker.get_items(@commander.mode, *params)
-
-    @url_seeker.display_items items   
-    display_bottom_menu_part
+    page = PageFactory.create(@commander.mode, params)
+    items = page.get_items
 
     if items.size == 0
       nil
     else
+      display_items items
+      display_bottom_menu_part
+
       user_selection = read_user_selection items
 
       if user_selection.quit?
@@ -61,7 +59,6 @@ class Main
               @commander.mode = 'category'
             when /action=channels/
               @commander.mode = 'channels'
-            puts "************"
             else
               nil
           end
@@ -74,23 +71,30 @@ class Main
           else
             @commander.mode = 'today'
           end
-          p "in archive #{current_item.channel}"
-          link_info = seek(current_item.channel)
+
+          link_info = seek(current_item.link)
         else
-          if current_item.container
-            @commander.mode = 'container'
+          if current_item.folder?
+            @commander.mode = 'folder'
             link_info = seek(current_item.link)
           else
-            media_info = request_media_info current_item.media_file
+            media_info = request_media_info(current_item.media_file)
 
-            link_info = LinkInfo.new(current_item.underscore_name, current_item.text, current_item.media_file,
-                                     media_info.link, media_info.session_expired?)
+            link_info = LinkInfo.new(current_item.underscore_name, current_item.text, current_item.media_file, media_info.link, media_info.session_expired?)
           end
         end
 
-        #puts "Cannot get movie link..." unless link_info.nil?
-
         link_info
+      end
+    end
+  end
+
+  def display_items items
+    if items.size == 0
+      puts "Empty search result."
+    else
+      items.each_with_index do |item1, index1|
+        puts "#{index1+1}. #{item1}"
       end
     end
   end
@@ -101,16 +105,18 @@ class Main
   end
 
   def request_media_info media_file
-    media_info = MediaInfo.request_media_info(UrlSeeker::ACCESS_URL, media_file, @cookie_helper.cookie)
+    access_page = AccessPage.new
+
+    media_info = access_page.request_media_info(media_file, @cookie_helper.cookie)
 
     if media_info.session_expired?
       @cookie_helper.renew_cookie
-      media_info = MediaInfo.request_media_info(UrlSeeker::ACCESS_URL, media_file, @cookie_helper.cookie)
+      media_info = access_page.request_media_info(media_file, @cookie_helper.cookie)
     end
 
     media_info
   end
-  
+
   def launch_link link
     if RUBY_PLATFORM =~ /(win|w)32$/
       `start wmplayer #{link}`

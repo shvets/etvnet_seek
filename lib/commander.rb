@@ -46,11 +46,6 @@ class Commander
         options[:runglish] = true
       end
 
-      options[:main] = false
-      opts.on( '-m', '--main', 'Display Main Menu' ) do
-        options[:main] = true
-      end
-
       options[:best_ten] = false
       opts.on( '-b', '--best-ten', 'Display Best 10 Menu' ) do
         options[:best_ten] = true
@@ -70,6 +65,11 @@ class Commander
       opts.on( '-c', '--channels', 'Display Channels Menu' ) do
         options[:channels] = true
       end
+
+      options[:main] = false
+      opts.on( '-m', '--main', 'Display Main Menu' ) do
+        options[:main] = true
+      end      
 
       # This displays the help screen, all programs are
       # assumed to have this option.

@@ -22,7 +22,7 @@ class UserSelection
   end
 
   def item items
-    one_level? ? items[index1] : items[index1].container[index2]
+    one_level? ? items[index1] : items[index1].folder[index2]
   end
 
   private

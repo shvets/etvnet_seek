@@ -6,7 +6,7 @@ class MediaItem
     @link = link
   end
 
-  def container?
+  def folder?
     false
   end
 
@@ -21,7 +21,7 @@ class ChannelMediaItem < MediaItem
   def initialize(text, link, archive_link)
     super(text, link)
 
-    @archive_link = link
+    @archive_link = archive_link
   end
 
   def channel
@@ -30,7 +30,7 @@ class ChannelMediaItem < MediaItem
 end
 
 class BrowseMediaItem < MediaItem
-  attr_accessor :container, :showtime, :starts, :rating, :info_link, :year, :duration
+  attr_accessor :folder, :showtime, :starts, :rating, :info_link, :year, :duration, :rating_image
   attr_reader :underscore_name, :media_file
 
   def initialize(text, link)
@@ -40,13 +40,13 @@ class BrowseMediaItem < MediaItem
     @media_file = extract_media_file
   end
 
-  def container?
-    not self.container.nil?
+  def folder?
+    not self.folder.nil?
   end
 
   def to_s
-    if container?
-      buffer = "**********Folder "
+    if folder?
+      buffer = "*** Folder *** "
     else
       buffer = ""
     end
