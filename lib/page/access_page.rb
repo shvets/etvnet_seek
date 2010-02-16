@@ -1,4 +1,5 @@
 require 'page/get_service_call'
+require 'media_info'
 
 class AccessPage < GetServiceCall
   ACCESS_URL = Page::BASE_URL + "/cgi-bin/video/access.fcgi"

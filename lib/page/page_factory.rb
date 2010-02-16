@@ -8,7 +8,7 @@ require 'page/freetv_page'
 
 class PageFactory
   def self.create mode, params = []
-    url = (mode == 'search') ? nil : params[0]
+    url = (mode == 'search') ? nil : (params.class == String ? params : params[0])
 
     case mode
       when 'search' then
@@ -35,7 +35,7 @@ class PageFactory
         page = FreetvPage.new url
       when 'category' then
         page = MediaPage.new url
-      when 'media ' then
+      when 'media' then
         page = MediaPage.new url
       else
         page = nil

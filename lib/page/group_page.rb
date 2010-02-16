@@ -1,6 +1,6 @@
 require 'page/page'
 
-class GroupPage < Page
+class GroupPage < BasePage
   protected
 
   def get_typical_items tag_name

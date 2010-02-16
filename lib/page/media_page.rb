@@ -1,6 +1,6 @@
-require 'page/page'
+require 'page/base_page'
 
-class MediaPage < Page
+class MediaPage < BasePage
   def items
     list = []
 
