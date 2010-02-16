@@ -8,7 +8,8 @@ require 'cookie_helper'
 require 'user_selection'
 require 'media_info'
 require 'link_info'
-require 'page'
+require 'page/page_factory'
+require 'page/access_page'
 require 'commander'
 require 'runglish'
 
@@ -40,9 +41,7 @@ class Main
     page = PageFactory.create(mode, params)
     items = page.get_items
 
-    if items.size == 0
-      nil
-    else
+    if items.size > 0
       display_items items
       display_bottom_menu_part(mode)
 
