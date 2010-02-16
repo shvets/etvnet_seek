@@ -8,7 +8,7 @@ class ChannelsPage < Page
     super(url)
   end
 
-  def get_items
+  def items
     list = []
 
     document.css("table table table.rounded_white table tr").each_with_index do |item, index|

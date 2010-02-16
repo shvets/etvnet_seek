@@ -1,7 +1,7 @@
 require 'page/page'
 
 class BasePage < Page
-  def get_items
+  def items
     list = []
 
     document.css("#tblCategories a").each do |item|

@@ -1,7 +1,7 @@
 require 'page/page'
 
 class AnnouncesPage < Page
-  def get_items
+  def items
     list = []
 
     document.css("table tr td div").each do |item|

@@ -3,7 +3,7 @@ require 'page/page'
 class GroupPage < Page
   protected
 
-  def get_typical_items url, tag_name
+  def get_typical_items tag_name
     list = []
 
     document.css(tag_name).at(0).next.children.each do |table|
@@ -39,20 +39,20 @@ class GroupPage < Page
 end
 
 class BestTenPage < GroupPage
-  def get_items
-    get_typical_items(url, "#tbl10best")
+  def items
+    get_typical_items("#tbl10best")
   end
 end
 
 class PopularPage < GroupPage
-  def get_items
-    get_typical_items(url, "#tblyearago")
+  def items
+    get_typical_items("#tblyearago")
   end
 end
 
 class WeRecommendPage < GroupPage
-  def get_items
-    items = get_typical_items(url, "#tblfree")
+  def items
+    items = get_typical_items("#tblfree")
 
 #    more_recommended_item = items.delete_at(items.size-1)
 #

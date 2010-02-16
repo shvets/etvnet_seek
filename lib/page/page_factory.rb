@@ -7,7 +7,7 @@ require 'page/announces_page'
 require 'page/freetv_page'
 
 class PageFactory
-  def self.create mode, params
+  def self.create mode, params = []
     url = (mode == 'search') ? nil : params[0]
 
     case mode

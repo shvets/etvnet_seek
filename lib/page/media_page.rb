@@ -1,7 +1,7 @@
 require 'page/page'
 
 class MediaPage < Page
-  def get_items
+  def items
     list = []
 
     document.css("b a.media_file").each do |item|

@@ -39,7 +39,7 @@ class Main
 
   def process mode, *params
     page = PageFactory.create(mode, params)
-    items = page.get_items
+    items = page.items
 
     if items.size > 0
       display_items items
@@ -83,8 +83,8 @@ class Main
     if items.size == 0
       puts "Empty search result."
     else
-      items.each_with_index do |item1, index1|
-        puts "#{index1+1}. #{item1}"
+      items.each_with_index do |item, index|
+        puts "#{index+1}. #{item}"
       end
     end
   end

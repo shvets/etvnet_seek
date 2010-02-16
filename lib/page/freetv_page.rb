@@ -1,7 +1,7 @@
 require 'page/page'
 
 class FreetvPage < Page
- def get_items
+ def items
     list = []
 
     document.css("table tr td table tr td table tr td div table tr").each do |item|
