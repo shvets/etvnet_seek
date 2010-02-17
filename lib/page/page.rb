@@ -1,3 +1,5 @@
+require 'nokogiri'
+
 require 'page/get_service_call'
 
 class Page < GetServiceCall

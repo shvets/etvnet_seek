@@ -1,4 +1,5 @@
 require 'page/post_service_call'
+require 'page/page'
 
 class CookiePage < PostServiceCall
   LOGIN_URL = "#{Page::BASE_URL}/cgi-bin/video/login.fcgi"

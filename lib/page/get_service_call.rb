@@ -1,3 +1,5 @@
+require 'open-uri'
+
 class GetServiceCall
   attr_reader :url, :uri
 

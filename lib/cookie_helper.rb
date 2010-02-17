@@ -1,12 +1,11 @@
 require 'net/http'
 require 'uri'
 
-require 'page'
+require 'page/cookie_page'
 
 class CookieHelper
-#  LOGIN_URL = "#{Page::BASE_URL}/cgi-bin/video/login.fcgi"
 
-  attr_reader :cookie
+  #attr_reader :cookie
   
   def initialize cookie_file_name, &block
     @cookie_file_name = cookie_file_name
@@ -14,6 +13,18 @@ class CookieHelper
 
     @cookie = get_cookie
   end
+
+  def cookie
+    @cookie ||= get_cookie
+  end
+
+  def renew_cookie
+    delete_cookie
+    @cookie = nil
+    #@cookie = retrieve_cookie
+  end
+
+  private
 
   def get_cookie
     if File.exist? @cookie_file_name
@@ -29,13 +40,6 @@ class CookieHelper
     cookie
   end
 
-  def renew_cookie
-    delete_cookie
-    @cookie = get_cookie
-  end
-
-  private
-
   def delete_cookie
     File.delete @cookie_file_name if File.exist? @cookie_file_name
   end
@@ -49,15 +53,6 @@ class CookieHelper
   end
 
   def retrieve_cookie username, password
-#    uri = URI.parse(url)
-#    conn = Net::HTTP.new(uri.host, uri.port)
-#
-#    headers = { "Content-Type" => "application/x-www-form-urlencoded" }
-#    resp, data = conn.post(uri.path,
-#      "action=login&username=#{username}&pwd=#{password}&skip_notice=&redirect=", headers)
-#
-#    cookie = resp.response['set-cookie']
-
     page = CookiePage.new
 
     cookie = page.retrieve_cookie(username, password)

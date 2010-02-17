@@ -1,4 +1,5 @@
 require 'page/page'
+require 'media_item'
 
 class BasePage < Page
   def items
@@ -88,4 +89,5 @@ class BasePage < Page
 
     list
   end
+  
 end
