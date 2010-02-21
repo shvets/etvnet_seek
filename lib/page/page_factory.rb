@@ -12,35 +12,29 @@ class PageFactory
 
     case mode
       when 'search' then
-        page = SearchPage.new *params
-      when 'folder' then
-        page = MediaPage.new url
+        SearchPage.new *params
       when 'main' then
-        page = BasePage.new
+        BasePage.new
       when 'channels' then
-        page = ChannelsPage.new
+        ChannelsPage.new
       when 'best_ten' then
-        page = BestTenPage.new
+        BestTenPage.new
       when 'popular' then
-        page = PopularPage.new
+        PopularPage.new
       when 'we_recommend' then
-        page = WeRecommendPage.new
-      when 'today' then
-        page = MediaPage.new url
-      when 'archive' then
-        page = MediaPage.new url
+        WeRecommendPage.new
       when 'announces' then
-        page = AnnouncesPage.new url
+        AnnouncesPage.new url
       when 'freetv' then
-        page = FreetvPage.new url
-      when 'category' then
-        page = MediaPage.new url
+        FreetvPage.new url
       when 'media' then
-        page = MediaPage.new url
+        MediaPage.new url
+      when 'access' then
+        AccessPage.new
+      when 'login' then
+        LoginPage.new
       else
-        page = nil
+        nil
     end
-
-    page
   end
 end

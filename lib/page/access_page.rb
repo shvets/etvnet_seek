@@ -11,7 +11,7 @@ class AccessPage < GetServiceCall
   def request media_file, cookie
     headers = { 'Cookie' => cookie }
 
-    request = Net::HTTP::Post.new(uri.request_uri, headers)
+    request = Net::HTTP::Post.new(ACCESS_URL, headers)
 
     request.set_form_data(
       { 'action' => 'start_video', 'bitrate' => '600',

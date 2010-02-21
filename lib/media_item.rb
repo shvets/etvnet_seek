@@ -41,7 +41,7 @@ class BrowseMediaItem < MediaItem
   end
 
   def folder?
-    not self.folder.nil?
+    folder == true
   end
 
   def to_s

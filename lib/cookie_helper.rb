@@ -1,86 +1,27 @@
 require 'net/http'
 require 'uri'
 
-require 'page/cookie_page'
+require 'page/login_page'
 
 class CookieHelper
-
-  #attr_reader :cookie
   
-  def initialize cookie_file_name, &block
+  def initialize cookie_file_name
     @cookie_file_name = cookie_file_name
-    @request_credentials = block
-
-    @cookie = get_cookie
   end
 
-  def cookie
-    @cookie ||= get_cookie
+  def load_cookie
+    File.exist?(@cookie_file_name) ? read_cookie : nil
   end
 
-  def renew_cookie
-    delete_cookie
-    @cookie = nil
-    #@cookie = retrieve_cookie
-  end
-
-  private
-
-  def get_cookie
-    if File.exist? @cookie_file_name
-      cookie = read_cookie
-    else
-      username, password = @request_credentials.call
-
-      cookie = retrieve_cookie username, password
-
-      write_cookie cookie
-   end
-
-    cookie
+  def save_cookie cookie
+    File.open(@cookie_file_name, 'w') { |file| file.puts cookie }
   end
 
   def delete_cookie
     File.delete @cookie_file_name if File.exist? @cookie_file_name
   end
-  
-  def read_cookie
-    File.open(@cookie_file_name, 'r') { |file| file.gets }
-  end
 
-  def write_cookie cookie
-    File.open(@cookie_file_name, 'w') { |file| file.puts cookie }
-  end
-
-  def retrieve_cookie username, password
-    page = CookiePage.new
-
-    cookie = page.retrieve_cookie(username, password)
-    
-    cleanup_cookie(cookie)
-  end
-  
-  def cleanup_cookie cookie
-    auth, expires = get_auth_and_expires(cookie)
-    username = get_username(cookie)
-    path = "/"
-    domain = ".etvnet.ca"
-    
-    cookies_text = <<-TEXT
-      auth=#{auth}; expires=#{expires}; path=#{path}; domain=#{domain}
-      username=#{username}; expires=#{expires}; path=#{path}; domain=#{domain}
-    TEXT
-
-    new_cookie = ""
-    require 'stringio'
-    StringIO.new(cookies_text).each_line do |line|
-      new_cookie = new_cookie + line.strip + "; "
-    end
-
-    new_cookie
-  end
-
-  def get_auth_and_expires cookie
+  def self.get_auth_and_expires cookie
     length = "auth=".length
 
     auth = ""
@@ -109,7 +50,7 @@ class CookieHelper
     [auth, expires]
   end
 
-  def get_username cookie
+  def self.get_username cookie
     length = "username=".length
 
     username = ""
@@ -133,4 +74,11 @@ class CookieHelper
 
     username
   end
+
+  private
+  
+  def read_cookie
+    File.open(@cookie_file_name, 'r') { |file| file.gets }
+  end
+
 end

@@ -9,19 +9,27 @@ class MediaPage < BasePage
       new_link = list.select {|l| l.link == link}.empty?
 
       if new_link
-        record = BrowseMediaItem.new(item.content.strip, link)
-
-        record.showtime = item.parent.parent.parent.css('td[1]').text.strip
-        record.year = item.parent.parent.next.next.content.strip
+        text = item.content.strip
+        showtime = item.parent.parent.parent.css('td[1]').text.strip
+        year = item.parent.parent.next.next.content.strip
 
         if link =~ /action=browse_container/
-          record.folder = true
+          folder = true
+          link = link[Page::BASE_URL.size..link.size]
+          duration = ""
         else
-          record.duration = item.parent.parent.next.next.next.next.content.strip unless
+          folder = false
+          duration = item.parent.parent.next.next.next.next.content.strip unless
             item.parent.parent.next.next.next.next.nil?
   #        record.stars = ""
   #        record.rating = ""
         end
+
+        record = BrowseMediaItem.new(text, link)
+        record.folder = folder
+        record.showtime = showtime
+        record.year = year
+        record.duration = duration
 
         list << record
       end

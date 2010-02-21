@@ -1,4 +1,4 @@
-require 'rubygems' unless RUBY_VERSION =~ /1.9.*/
+#require 'rubygems' unless RUBY_VERSION =~ /1.9.*/
 
 #require "readline"
 require "highline/import"
@@ -17,20 +17,14 @@ class Main
   COOKIE_FILE_NAME = ENV['HOME'] + "/.etvnet-seek"
 
   def initialize
-    @cookie_helper = CookieHelper.new COOKIE_FILE_NAME do
-      username = ask("Enter username :  " )
-      password = ask("Enter password : " ) { |q| q.echo = '*' }
-
-      [username, password]
-    end
-
+    @cookie_helper = CookieHelper.new COOKIE_FILE_NAME
     @commander = Commander.new
   end
 
   def seek *params
     if @commander.search_mode?
       params = read_keywords(*params)
-      
+
       puts "Keywords: #{params}" if @commander.runglish_mode?
     end
 
@@ -39,44 +33,88 @@ class Main
 
   def process mode, *params
     page = PageFactory.create(mode, params)
-    items = page.items
 
-    if items.size > 0
-      display_items items
-      display_bottom_menu_part(mode)
+    if mode == 'access'
+      process_access page, params[0]
+    elsif mode == 'login'
+      item = params[0]
+      cookie = page.login(*get_credentials)
 
-      user_selection = read_user_selection items
+      @cookie_helper.save_cookie cookie
 
-      if not user_selection.quit?
-        current_item = user_selection.item(items)
+      process("access", item)
+    else
+      items = page.items
 
-        if mode == 'main'
-          case current_item.link
-            when /announces.html/ then
-              process('announces', current_item.link)
-            when /freeTV.html/ then
-              process('freetv', current_item.link)
-            when /category=/
-              process('category', current_item.link)
-            when /action=channels/
-              process('channels', current_item.link)
-          end
-        elsif mode == 'channels'
-          if user_selection.archive?
-            process('archive', current_item.link)
-          else
-            process('today', current_item.link)
-          end
-        else # media : announces, freetv, category
-          if current_item.folder?
-            process('folder', current_item.link)
-          else
-            media_info = request_media_info(current_item.media_file)
-            LinkInfo.new(current_item, media_info)
+      if items.size > 0
+        display_items items
+        display_bottom_menu_part(mode)
+
+        user_selection = read_user_selection items
+
+        if not user_selection.quit?
+          current_item = user_selection.item(items)
+
+          if mode == 'main'
+            case current_item.link
+              when /announces.html/ then
+                process('announces', current_item.link)
+              when /freeTV.html/ then
+                process('freetv', current_item.link)
+              when /category=/
+                process('media', current_item.link)
+              when /action=channels/
+                process('channels', current_item.link)
+            end
+          elsif mode == 'channels'
+            if user_selection.archive?
+              process('media', current_item.archive_link)
+            else
+              process('media', current_item.link)
+            end
+          else # media : announces, freetv, category
+            if current_item.folder?
+              process('media', current_item.link)
+            else
+              process("access", current_item)
+            end
           end
         end
       end
     end
+  end
+
+  def process_access page, item
+    cookie = @cookie_helper.load_cookie
+
+    if cookie.nil?
+      process("login", item)
+    else
+      #expires=Fri, 20-Feb-2009 03:18:58 GMT
+      #auth, expires = CookieHelper.get_auth_and_expires(cookie)
+      if false #cookie expired?
+        @cookie_helper.delete_cookie
+
+        process("login", item)
+      else
+        media_info = page.request_media_info(item.media_file, cookie)
+
+        if media_info.session_expired?
+          @cookie_helper.delete_cookie
+
+          process("login", item)
+        else
+          LinkInfo.new(item, media_info)
+        end
+      end
+    end
+  end
+
+  def get_credentials
+    username = ask("Enter username :  " )
+    password = ask("Enter password : " ) { |q| q.echo = '*' }
+
+    [username, password]
   end
 
   def display_items items
@@ -94,18 +132,37 @@ class Main
     puts "q. to exit"
   end
 
-  def request_media_info media_file
-    access_page = AccessPage.new
+#  def request_media_info media_file
+#    access_page = AccessPage.new
+#
+#    access_page.request_media_info(media_file, get_cookie)
+#  end
 
-    media_info = access_page.request_media_info(media_file, @cookie_helper.cookie)
+#  def request_media_info media_file
+#    access_page = AccessPage.new
+#
+#    media_info = access_page.request_media_info(media_file, get_cookie)
+#
+#    if media_info.session_expired?
+#      @cookie_helper.expire_cookie
+#
+#      media_info = access_page.request_media_info(media_file, get_cookie)
+#    end
+#
+#    media_info
+#  end
 
-    if media_info.session_expired?
-      @cookie_helper.renew_cookie
-      media_info = access_page.request_media_info(media_file, @cookie_helper.cookie)
-    end
-
-    media_info
-  end
+#  def get_cookie
+#    cookie = @cookie_helper.get_cookie
+#
+#    if cookie.nil?
+#      cookie = @cookie_helper.retrieve_cookie(*get_credentials)
+#
+#      @cookie_helper.write_cookie cookie
+#    end
+#
+#    cookie
+#  end
 
   def launch_link link
     if RUBY_PLATFORM =~ /(win|w)32$/
@@ -136,7 +193,7 @@ class Main
   def read_user_selection items
     while true
       user_selection = UserSelection.new ask("Select the number: ")
-      
+
       if not user_selection.blank?
         if user_selection.quit? or user_selection.index1 < items.size
           return user_selection
