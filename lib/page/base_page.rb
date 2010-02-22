@@ -12,7 +12,7 @@ class BasePage < Page
       list << MediaItem.new(text, href)
     end
 
-    list.delete_at(0)
+    #list.delete_at(0)
 
     list
   end
@@ -29,9 +29,14 @@ class BasePage < Page
     list = []
 
     document.css("table tr td .navigation").each do |item|
-      record = { :text => item.children.at(0).content, :link =>  item['href']}
+      text = item.children.at(0).content
+      href = item['href']
+      record = MediaItem.new(text, href)
       unless list.include? record
-        list << record
+#        unless href =~ /forum.etvnet.ca/ or href =~ /help.html/ or href =~ /contacts.html/ or
+#               href =~ /eitv_browse.fcgi/ or href =~ /login.fcgi/ or href =~ /eitv_signup3.cgi/
+          list << record
+#        end
       end
     end
 
@@ -89,5 +94,15 @@ class BasePage < Page
 
     list
   end
-  
+
+  protected
+
+
+  def additional_info node, index
+    children = node.parent.children
+    if children.size > 0
+      element = children.at(index)
+      element.text if element
+    end
+  end
 end

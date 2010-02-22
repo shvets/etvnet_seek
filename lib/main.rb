@@ -58,13 +58,15 @@ class Main
           if mode == 'main'
             case current_item.link
               when /announces.html/ then
-                process('announces', current_item.link)
+                process('announces')
               when /freeTV.html/ then
-                process('freetv', current_item.link)
-              when /category=/
+                process('freetv')
+              when /category=/ then
                 process('media', current_item.link)
-              when /action=channels/
+              when /action=channels/ then
                 process('channels', current_item.link)
+              when /action=view_recommended/ then
+                process("media", current_item.link)
             end
           elsif mode == 'channels'
             if user_selection.archive?

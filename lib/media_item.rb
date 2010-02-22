@@ -10,6 +10,10 @@ class MediaItem
     false
   end
 
+  def ==(object)
+    object.text == text and object.link == link
+  end
+
   def to_s
     text
   end  
@@ -29,8 +33,23 @@ class ChannelMediaItem < MediaItem
   end
 end
 
+class GroupMediaItem < MediaItem
+  attr_reader :channel
+
+  def initialize(text, link, channel)
+    super(text, link)
+    
+    @channel = channel
+  end
+
+  def to_s
+    "#{text} --- #{channel} --- #{link}"
+  end
+
+end
+
 class BrowseMediaItem < MediaItem
-  attr_accessor :folder, :showtime, :starts, :rating, :info_link, :year, :duration, :rating_image
+  attr_accessor :folder, :showtime, :starts, :rating, :info_link, :year, :duration, :rating_image, :image
   attr_reader :underscore_name, :media_file
 
   def initialize(text, link)
@@ -51,15 +70,24 @@ class BrowseMediaItem < MediaItem
       buffer = ""
     end
 
-    buffer += "#{text} : #{underscore_name}"
+    buffer += text
+    if underscore_name
+      buffer += ": #{underscore_name}"
+    else
+      buffer += ": #{link}"
+    end
+
+    buffer += " --- #{showtime}" if showtime
 
     buffer += " (#{media_file})" if not media_file.nil? and media_file.size > 0
-    buffer += " --- #{year}" if not year.nil? and year.size > 0
+    buffer += " --- #{year}" if not year.nil? and year.size > 2
     buffer += " --- #{duration}" if not duration.nil? and duration.size > 0
+    buffer += " --- #{image}" if image
+    buffer += " --- #{rating_image}" if rating_image
 
     buffer
   end
-
+    
   private
 
   def extract_underscore_name

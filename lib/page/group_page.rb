@@ -12,29 +12,19 @@ class GroupPage < BasePage
       unless href.nil?
         link = href.attributes['href'].value
         text = href.children.at(0).content
+        channel = ""
 
         if link =~ /media/
           additional_info = additional_info(href, 1)
 
-          text += additional_info unless additional_info.nil?
+          channel = additional_info.gsub(/\(|\)/, '') unless additional_info.nil?
         end
-
-        record = BrowseMediaItem.new(text, link)
-
-        list << record
+        
+        list << GroupMediaItem.new(text, link, channel)
       end
     end
 
     list
-  end
-
-  def additional_info node, index
-    children = node.parent.children
-    if children.size > 0
-      children.at(index)
-    else
-      nil
-    end
   end
 end
 

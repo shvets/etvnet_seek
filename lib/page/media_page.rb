@@ -1,4 +1,5 @@
 require 'page/base_page'
+require 'media_item'
 
 class MediaPage < BasePage
   def items
@@ -10,19 +11,21 @@ class MediaPage < BasePage
 
       if new_link
         text = item.content.strip
+        additional_info = additional_info(item, 1)
+
+        text += additional_info unless additional_info.nil?
+
         showtime = item.parent.parent.parent.css('td[1]').text.strip
         year = item.parent.parent.next.next.content.strip
+        duration = ""
 
         if link =~ /action=browse_container/
           folder = true
           link = link[Page::BASE_URL.size..link.size]
-          duration = ""
         else
           folder = false
           duration = item.parent.parent.next.next.next.next.content.strip unless
             item.parent.parent.next.next.next.next.nil?
-  #        record.stars = ""
-  #        record.rating = ""
         end
 
         record = BrowseMediaItem.new(text, link)
@@ -41,8 +44,7 @@ class MediaPage < BasePage
   def item_titles
     list = []
 
-    #doc.css("table tr[2] td table tr td table tr[2] td[2] table").each_with_index do |item1, index1|
-    doc.css("table tr[2] td table tr td table tr[2] td[2] table").each_with_index do |item1, index1|
+    document.css("table tr[2] td table tr td table tr[2] td[2] table").each_with_index do |item1, index1|
 
       if index1 == 1
         item1.css("tr[1] td").each do |item2|
@@ -50,9 +52,9 @@ class MediaPage < BasePage
           text = node.text.strip
 
           if node.text? and not text.size == 0
-             list << {:text => text}
+            list << MediaItem.new(text)
           elsif node.element? and not text.size == 0
-             list << {:text => text, :link => node.attributes['href'].value }
+             list << MediaItem.new(text, node.attributes['href'].value)
           end
         end
       end

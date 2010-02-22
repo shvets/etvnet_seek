@@ -1,3 +1,4 @@
+require 'page/main_page'
 require 'page/search_page'
 require 'page/media_page'
 require 'page/base_page'
@@ -14,7 +15,7 @@ class PageFactory
       when 'search' then
         SearchPage.new *params
       when 'main' then
-        BasePage.new
+        MainPage.new
       when 'channels' then
         ChannelsPage.new
       when 'best_ten' then
@@ -24,9 +25,9 @@ class PageFactory
       when 'we_recommend' then
         WeRecommendPage.new
       when 'announces' then
-        AnnouncesPage.new url
+        AnnouncesPage.new
       when 'freetv' then
-        FreetvPage.new url
+        FreetvPage.new
       when 'media' then
         MediaPage.new url
       when 'access' then
