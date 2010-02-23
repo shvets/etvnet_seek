@@ -1,11 +1,24 @@
-class PostServiceCall
+require 'open-uri'
+
+class ServiceCall
   attr_reader :url
 
   def initialize(url)
     @url = url
   end
 
-  def response request
+  def get
+    open(url)
+  end
+
+  def request params
+    uri = URI.parse(url)
+    connection = Net::HTTP.new(uri.host, uri.port)
+
+    connection.request(params)
+  end
+
+  def post request
     uri = URI.parse(url)
     connection = Net::HTTP.new(uri.host, uri.port)
 

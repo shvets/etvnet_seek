@@ -46,7 +46,6 @@ class BasePage < Page
   def category_breadcrumbs
     list = []
 
-    #doc.css("table tr[2] td table tr td table tr[1] td[2] table tr[1] td strong").each do |item|
     document.css("table tr[2] td table tr[2] td table tr[1] td[1]").each do |item|
       item.children.each do |breadcrumb|
         record = {}
@@ -73,7 +72,6 @@ class BasePage < Page
   def categories
     list = []
 
-#    doc.css("table tr[2] td table tr td table tr[2] td[2] table").each_with_index do |item1, index1|
     document.css("table tr[2] td table tr td table tr td").each_with_index do |item1, index1|
       if index1 > 0
         item1.css("a").each do |item2|
@@ -96,7 +94,6 @@ class BasePage < Page
   end
 
   protected
-
 
   def additional_info node, index
     children = node.parent.children

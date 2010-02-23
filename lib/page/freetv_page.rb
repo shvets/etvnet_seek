@@ -1,4 +1,5 @@
 require 'page/page'
+require 'browse_media_item'
 
 class FreetvPage < MediaPage
   FREETV_URL = BASE_URL + "/freeTV.html"
@@ -11,7 +12,6 @@ class FreetvPage < MediaPage
     list = []
 
     document.css("table tr").each do |item|
-      #next if index < 1
       node = item.css("td img")
       if node.size > 0
         text = node.at(0).parent.css("a")

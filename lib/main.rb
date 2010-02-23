@@ -134,38 +134,6 @@ class Main
     puts "q. to exit"
   end
 
-#  def request_media_info media_file
-#    access_page = AccessPage.new
-#
-#    access_page.request_media_info(media_file, get_cookie)
-#  end
-
-#  def request_media_info media_file
-#    access_page = AccessPage.new
-#
-#    media_info = access_page.request_media_info(media_file, get_cookie)
-#
-#    if media_info.session_expired?
-#      @cookie_helper.expire_cookie
-#
-#      media_info = access_page.request_media_info(media_file, get_cookie)
-#    end
-#
-#    media_info
-#  end
-
-#  def get_cookie
-#    cookie = @cookie_helper.get_cookie
-#
-#    if cookie.nil?
-#      cookie = @cookie_helper.retrieve_cookie(*get_credentials)
-#
-#      @cookie_helper.write_cookie cookie
-#    end
-#
-#    cookie
-#  end
-
   def launch_link link
     if RUBY_PLATFORM =~ /(win|w)32$/
       `start wmplayer #{link}`

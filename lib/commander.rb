@@ -3,21 +3,11 @@ class Commander
   
   def initialize
     @options = parse_options
-    
-#    @mode = get_mode @options
   end
 
   def search_mode?
     @options[:runglish]
   end
-#
-#  def main_menu_mode?
-#    @mode == 'main'
-#  end
-#
-#  def channels_mode?
-#    @mode == 'channels'
-#  end
 
   def runglish_mode?
     @options[:runglish]
@@ -86,7 +76,7 @@ class Commander
       options[:main] = false
       opts.on( '-m', '--main', 'Display Main Menu' ) do
         options[:main] = true
-      end      
+      end 
 
       # This displays the help screen, all programs are
       # assumed to have this option.

@@ -1,4 +1,5 @@
 require 'page/page'
+require 'group_media_item'
 
 class GroupPage < BasePage
   protected
@@ -42,14 +43,6 @@ end
 
 class WeRecommendPage < GroupPage
   def items
-    items = get_typical_items("#tblfree")
-
-#    more_recommended_item = items.delete_at(items.size-1)
-#
-#    more_recommended_items = get_menu_items(UrlSeeker::BASE_URL + more_recommended_item.link)
-#
-#    items.concat more_recommended_items
-
-    items
+    get_typical_items("#tblfree")
   end
 end

@@ -1,4 +1,5 @@
 require 'page/base_page'
+require 'media_item'
 
 class MainPage < BasePage
 

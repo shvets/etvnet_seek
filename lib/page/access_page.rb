@@ -1,14 +1,27 @@
-require 'page/get_service_call'
+require 'page/service_call'
 require 'media_info'
 
-class AccessPage < GetServiceCall
+class AccessPage < ServiceCall
   ACCESS_URL = Page::BASE_URL + "/cgi-bin/video/access.fcgi"
 
   def initialize
     super(ACCESS_URL)
   end
 
-  def request media_file, cookie
+  def request_media_info media_file, cookie
+    response = request(build_request(media_file, cookie))
+
+    media_info = response.body
+
+    link = JSON.parse(media_info)["PARAMETERS"]["REDIRECT_URL"]
+    session_expired = (JSON.parse(media_info)["PARAMETERS"]["error_session_expire"] == 1)
+
+    MediaInfo.new link, session_expired
+  end
+
+  private
+
+  def build_request media_file, cookie
     headers = { 'Cookie' => cookie }
 
     request = Net::HTTP::Post.new(ACCESS_URL, headers)
@@ -20,16 +33,5 @@ class AccessPage < GetServiceCall
     )
 
     request
-  end
-
-  def request_media_info media_file, cookie
-    response = response_low_level(request(media_file, cookie))
-
-    media_info = response.body
-
-    link = JSON.parse(media_info)["PARAMETERS"]["REDIRECT_URL"]
-    session_expired = (JSON.parse(media_info)["PARAMETERS"]["error_session_expire"] == 1)
-
-    MediaInfo.new link, session_expired
   end
 end

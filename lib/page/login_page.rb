@@ -1,7 +1,7 @@
 require 'page/post_service_call'
 require 'page/page'
 
-class LoginPage < PostServiceCall
+class LoginPage < ServiceCall
   LOGIN_URL = "#{Page::BASE_URL}/cgi-bin/video/login.fcgi"
 
   def initialize
@@ -11,7 +11,7 @@ class LoginPage < PostServiceCall
   def login username, password
     params = "action=login&username=#{username}&pwd=#{password}&skip_notice=&redirect="
 
-    response = response(*params)
+    response = post(*params)
 
     cookie = response.response['set-cookie']
 
