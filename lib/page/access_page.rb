@@ -15,12 +15,7 @@ class AccessPage < ServiceCall
 
     response = post(params, headers)
 
-    media_info = response.body
-
-    link = JSON.parse(media_info)["PARAMETERS"]["REDIRECT_URL"]
-    session_expired = (JSON.parse(media_info)["PARAMETERS"]["error_session_expire"] == 1)
-
-    MediaInfo.new link, session_expired
+    MediaInfo.new JSON.parse(response.body)["PARAMETERS"]
   end
 
 end
