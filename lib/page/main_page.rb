@@ -12,7 +12,7 @@ class MainPage < BasePage
 
        unless href =~ /forum.etvnet.ca/ or href =~ /action=browse_persons/ or href =~ /valentines2010/
         list << MediaItem.new(text, href)
-         end
+       end
     end
 
     list.delete_at(0)

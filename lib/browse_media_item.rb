@@ -1,14 +1,10 @@
 require 'media_item'
 
 class BrowseMediaItem < MediaItem
-  attr_accessor :folder, :showtime, :starts, :rating, :info_link, :year, :duration, :rating_image, :image
-  attr_reader :underscore_name, :media_file
+  attr_accessor :folder, :showtime, :year, :duration, :rating_image, :image
 
   def initialize(text, link)
     super(text, link)
-
-    @underscore_name = extract_underscore_name
-    @media_file = extract_media_file
   end
 
   def folder?
@@ -43,19 +39,4 @@ class BrowseMediaItem < MediaItem
     buffer
   end
 
-  private
-
-  def extract_underscore_name
-    result = link.match(/(\w*)\/(\w*)\/(\w*)\/([\w|-]*)/)
-
-    return nil if result.nil?
-
-    (result.size > 3) ? result[4] : ""
-  end
-
-  def extract_media_file
-    result = link.match(/(\w*)\/(\w*)\/(\w*)\/([\w|-]*)/)
-
-    (not result.nil? and result.size > 2) ? result[3] : ""
-  end
 end

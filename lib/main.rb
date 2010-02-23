@@ -65,9 +65,16 @@ class Main
                 process('media', current_item.link)
               when /action=channels/ then
                 process('channels', current_item.link)
-              when /action=view_recommended/ then
-                process("media", current_item.link)
+#              when /action=view_recommended/ then
+#                p "***"
+#                process("media", current_item.link)
             end
+#          elsif mode == 'we_recommend'
+#            if current_item.link =~ /action=view_recommended/
+#            else
+#
+#            end
+#            process("media", current_item.link)
           elsif mode == 'channels'
             if user_selection.archive?
               process('media', current_item.archive_link)
@@ -75,7 +82,7 @@ class Main
               process('media', current_item.link)
             end
           else # media : announces, freetv, category
-            if current_item.folder?
+            if current_item.folder? or current_item.link =~ /action=view_recommended/
               process('media', current_item.link)
             else
               process("access", current_item)

@@ -1,3 +1,5 @@
+require 'stringio'
+
 require 'page/post_service_call'
 require 'page/page'
 
@@ -9,9 +11,9 @@ class LoginPage < ServiceCall
   end
 
   def login username, password
-    params = "action=login&username=#{username}&pwd=#{password}&skip_notice=&redirect="
+    headers = { "Content-Type" => "application/x-www-form-urlencoded" }
 
-    response = post(*params)
+    response = post({ 'action' => 'login', 'username' => username, 'pwd'=> password }, headers)
 
     cookie = response.response['set-cookie']
 
@@ -36,7 +38,7 @@ class LoginPage < ServiceCall
     TEXT
 
     new_cookie = ""
-    require 'stringio'
+
     StringIO.new(cookies_text).each_line do |line|
       new_cookie = new_cookie + line.strip + "; "
     end

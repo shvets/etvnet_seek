@@ -11,18 +11,22 @@ class ServiceCall
     open(url)
   end
 
-  def request params
-    uri = URI.parse(url)
-    connection = Net::HTTP.new(uri.host, uri.port)
+  def post params, headers
+    request = Net::HTTP::Post.new(url, headers)
 
-    connection.request(params)
+    request.set_form_data(params)
+
+    request(request)
   end
 
-  def post request
+  protected
+
+  def request request
     uri = URI.parse(url)
+
     connection = Net::HTTP.new(uri.host, uri.port)
 
-    headers = { "Content-Type" => "application/x-www-form-urlencoded" }
-    connection.post(uri.path, request, headers)
+    connection.request(request)
   end
+  
 end
