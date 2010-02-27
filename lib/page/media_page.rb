@@ -40,28 +40,6 @@ class MediaPage < BasePage
     end
 
     list
-  end
-
-  def item_titles
-    list = []
-
-    document.css("table tr[2] td table tr td table tr[2] td[2] table").each_with_index do |item1, index1|
-
-      if index1 == 1
-        item1.css("tr[1] td").each do |item2|
-          node = item2.children.at(0)
-          text = node.text.strip
-
-          if node.text? and not text.size == 0
-            list << MediaItem.new(text)
-          elsif node.element? and not text.size == 0
-             list << MediaItem.new(text, node.attributes['href'].value)
-          end
-        end
-      end
-    end
-
-    list
   end  
 
 end

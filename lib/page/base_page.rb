@@ -12,8 +12,6 @@ class BasePage < Page
       list << MediaItem.new(text, href)
     end
 
-    #list.delete_at(0)
-
     list
   end
 
@@ -28,16 +26,11 @@ class BasePage < Page
   def navigation_menu
     list = []
 
-    document.css("table tr td .navigation").each do |item|
+    document.css("table tr td .navigation").first.parent.parent.parent.css("tr td a").each do |item|
       text = item.children.at(0).content
       href = item['href']
-      record = MediaItem.new(text, href)
-      unless list.include? record
-#        unless href =~ /forum.etvnet.ca/ or href =~ /help.html/ or href =~ /contacts.html/ or
-#               href =~ /eitv_browse.fcgi/ or href =~ /login.fcgi/ or href =~ /eitv_signup3.cgi/
-          list << record
-#        end
-      end
+
+      list <<  MediaItem.new(text, href) unless href =~ /(login|signup)/
     end
 
     list
@@ -46,23 +39,15 @@ class BasePage < Page
   def category_breadcrumbs
     list = []
 
-    document.css("table tr[2] td table tr[2] td table tr[1] td[1]").each do |item|
-      item.children.each do |breadcrumb|
-        record = {}
+    document.css("table tr td table tr td table tr td strong").each_with_index do |item, index|
+      if index == 0
+        item.children.each do |child|
+          text = child.text
+          link = child.attributes['href']
+          href = link.nil? ? nil : link.value
 
-        if breadcrumb.text.strip.size > 0
-          record[:text] = breadcrumb.text
+          list << MediaItem.new(text, href)
         end
-
-        if breadcrumb.element?
-          href = breadcrumb.attributes['href']
-
-          if href.respond_to? :value
-            record[:link] = breadcrumb.attributes['href'].value
-          end
-        end
-
-        list << record if record.size > 0
       end
     end
 
@@ -72,21 +57,56 @@ class BasePage < Page
   def categories
     list = []
 
-    document.css("table tr[2] td table tr td table tr td").each_with_index do |item1, index1|
-      if index1 > 0
-        item1.css("a").each do |item2|
-          link = item2.attributes['href'].value
+    document.css("table").each_with_index do |table1, index1|
+      if index1 == 5
+        table1.css("tr/td/table/tr/td/table").each_with_index do |table2, index2|
+          if index2 == 2
+            table2.css("tr[2]/td[2]/table").each_with_index do |table3, index3|
 
-          if link =~ /category/
-            record = { :text => item2.text,  :link => link }
+            #if index2 > 1
+              table2.css("tr td a").each_with_index do |item2, index4|
+                link = item2.attributes['href'].value
 
-            additional_info = additional_info(item2, 2)
+                #if link =~ /category/
+                if index4 > 0
+                  text = item2.text
+                  href = link
 
-            record[:additional_info] = additional_info unless additional_info.nil?
+                  additional_info = additional_info(item2, 2)
 
-            list << record
+                  list << MediaItem.new(text, href, additional_info)
+                end
+              end
+            end
           end
         end
+      end
+    end
+
+    list
+  end
+
+  def title_items
+    list = []
+
+    root = nil
+    document.css("a").each do |item|
+      link = item.attributes['href']
+
+      if link.value =~ /order_by/
+        root = link.parent.parent.parent.parent.parent.parent
+        break
+      end
+    end
+
+    if root
+      root.css("a").each do |item|
+        link = item.attributes['href'].value
+
+        text = item.text
+        href = link
+
+        list << MediaItem.new(text, href)
       end
     end
 

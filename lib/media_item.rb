@@ -1,10 +1,11 @@
 class MediaItem
-  attr_reader :text, :link
+  attr_reader :text, :link, :additional_info
   attr_reader :underscore_name, :media_file
 
-  def initialize(text, link)
+  def initialize(text, link, additional_info = nil)
     @text = text
     @link = link
+    @additional_info = additional_info
 
     @underscore_name = extract_underscore_name
     @media_file = extract_media_file

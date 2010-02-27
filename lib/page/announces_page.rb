@@ -8,6 +8,10 @@ class AnnouncesPage < MediaPage
     super(ANNOUNCES_URL)
   end
 
+  def category_breadcrumbs
+    []
+  end
+
   def items
     list = []
 

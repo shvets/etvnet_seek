@@ -8,6 +8,10 @@ class FreetvPage < MediaPage
     super(FREETV_URL)
   end
 
+  def category_breadcrumbs
+    []
+  end
+  
  def items
     list = []
 
