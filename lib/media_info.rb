@@ -25,7 +25,7 @@ class MediaInfo
   end
 
   def session_expired?
-    @session_expire
+    @session_expired
   end
 end
 
