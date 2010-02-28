@@ -8,4 +8,12 @@
 
 == Usage
 
-etvnet_seek movie_title
+Usage: etvnet_seek [options] keywords
+    -s, --search                     Display Search Menu
+    -r, --runglish                   Enter russian keywords in translit
+    -b, --best-ten                   Display Best 10 Menu
+    -p, --popular                    Display Popular Menu
+    -w, --we-recommend               Display We recommend Menu
+    -c, --channels                   Display Channels Menu
+    -m, --main                       Display Main Menu
+    -h, --help                       Display this screen
