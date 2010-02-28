@@ -1,6 +1,3 @@
-require 'page/page'
-require 'browse_media_item'
-
 class FreetvPage < MediaPage
   FREETV_URL = BASE_URL + "/freeTV.html"
 

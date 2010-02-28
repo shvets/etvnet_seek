@@ -1,5 +1,3 @@
-require 'media_item'
-
 class GroupMediaItem < MediaItem
   attr_reader :channel
 

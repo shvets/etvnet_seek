@@ -1,7 +1,3 @@
-require 'page/base_page'
-require 'media_item'
-require 'browse_media_item'
-
 class MediaPage < BasePage
   def items
     list = []

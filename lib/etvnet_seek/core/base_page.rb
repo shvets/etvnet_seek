@@ -1,6 +1,3 @@
-require 'page/page'
-require 'media_item'
-
 class BasePage < Page
   def items
     list = []
@@ -67,7 +64,6 @@ class BasePage < Page
               table2.css("tr td a").each_with_index do |item2, index4|
                 link = item2.attributes['href'].value
 
-                #if link =~ /category/
                 if index4 > 0
                   text = item2.text
                   href = link
@@ -93,20 +89,28 @@ class BasePage < Page
     document.css("a").each do |item|
       link = item.attributes['href']
 
-      if link.value =~ /order_by/
-        root = link.parent.parent.parent.parent.parent.parent
-        break
+      unless link.value =~ /login.fcgi/
+        if link.value =~ /order_by/
+          root = link.parent.parent.parent.parent.parent.parent
+          break
+        end
       end
     end
 
     if root
-      root.css("a").each do |item|
-        link = item.attributes['href'].value
+      root.css("td").each do |item|
+        if item.search("table/tr/td/a").size > 0
+          link = item.css("table tr td a").first
 
-        text = item.text
-        href = link
+          text = link.text
+          href = link.attributes['href'].value
 
-        list << MediaItem.new(text, href)
+          list << MediaItem.new(text, href)
+        elsif item.children.size == 1
+          if list.all? { |e| e.text != item.text }
+            list << MediaItem.new(item.text, nil)
+          end
+        end
       end
     end
 

@@ -1,6 +1,3 @@
-require 'page/page'
-require 'group_media_item'
-
 class GroupPage < BasePage
   protected
 

@@ -1,8 +1,6 @@
 require 'net/http'
 require 'uri'
 
-require 'page/login_page'
-
 class CookieHelper
   
   def initialize cookie_file_name

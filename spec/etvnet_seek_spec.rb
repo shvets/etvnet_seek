@@ -2,7 +2,7 @@ $LOAD_PATH.unshift File.dirname(__FILE__) + '/lib'
 
 require 'rubygems' unless RUBY_VERSION =~ /1.9.*/
 
-require 'url_seeker'
+require 'etvnet/url_seeker'
 require 'runglish'
 
 describe UrlSeeker do

@@ -1,16 +1,13 @@
-#require 'rubygems' unless RUBY_VERSION =~ /1.9.*/
-
-#require "readline"
 require "highline/import"
 require 'optparse'
+require 'date'
 
-require 'cookie_helper'
-require 'user_selection'
-require 'media_info'
-require 'link_info'
-require 'page/page_factory'
-require 'page/access_page'
-require 'commander'
+require 'etvnet_seek/core/page_factory'
+
+require 'etvnet_seek/cookie_helper'
+require 'etvnet_seek/user_selection'
+require 'etvnet_seek/link_info'
+require 'etvnet_seek/commander'
 require 'runglish'
 
 class Main
@@ -53,7 +50,7 @@ class Main
         user_selection = read_user_selection items
 
         if not user_selection.quit?
-          current_item = user_selection.item(items)
+          current_item = items[user_selection.index]
 
           if mode == 'main'
             case current_item.link
@@ -90,9 +87,10 @@ class Main
     if cookie.nil?
       process("login", item)
     else
-      #expires=Fri, 20-Feb-2009 03:18:58 GMT
-      #auth, expires = CookieHelper.get_auth_and_expires(cookie)
-      if false #cookie expired?
+      result = CookieHelper.get_auth_and_expires(cookie)
+      cookie_expire_date =  DateTime.strptime(result[1], "%A, %d-%b-%Y %H:%M:%S %Z")
+
+      if cookie_expire_date < DateTime.now # cookie expired?
         @cookie_helper.delete_cookie
 
         process("login", item)
@@ -159,17 +157,21 @@ class Main
   end
 
   def read_user_selection items
+    user_selection = UserSelection.new
+    
     while true
-      user_selection = UserSelection.new ask("Select the number: ")
+      user_selection.parse(ask("Select the number: "))
 
       if not user_selection.blank?
-        if user_selection.quit? or user_selection.index1 < items.size
-          return user_selection
+        if user_selection.quit? or user_selection.index < items.size
+          break
         else
           puts "Selection is out of range: [1..#{items.size}]"
         end
       end
     end
+
+    user_selection
   end
 
 end

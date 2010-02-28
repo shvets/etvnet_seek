@@ -1,6 +1,3 @@
-require 'page/service_call'
-require 'media_info'
-
 class AccessPage < ServiceCall
   ACCESS_URL = Page::BASE_URL + "/cgi-bin/video/access.fcgi"
 

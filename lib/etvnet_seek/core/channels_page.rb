@@ -1,6 +1,3 @@
-require 'page/page'
-require 'channel_media_item'
-
 class ChannelsPage < MediaPage
   BROWSE_URL   = BASE_URL + "/cgi-bin/video/eitv_browse.fcgi"
   CHANNELS_URL = BROWSE_URL + "?action=channels"

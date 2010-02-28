@@ -1,8 +1,5 @@
 require 'stringio'
 
-require 'page/post_service_call'
-require 'page/page'
-
 class LoginPage < ServiceCall
   LOGIN_URL = "#{Page::BASE_URL}/cgi-bin/video/login.fcgi"
 

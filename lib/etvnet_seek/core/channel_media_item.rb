@@ -1,5 +1,3 @@
-require 'media_item'
-
 class ChannelMediaItem < MediaItem
   attr_reader :archive_link
 

@@ -1,7 +1,5 @@
 require 'nokogiri'
 
-require 'page/service_call'
-
 class Page < ServiceCall
   BASE_URL = "http://www.etvnet.ca"
 

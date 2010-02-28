@@ -13,7 +13,6 @@ class Commander
     @options[:runglish]
   end
 
-
   def get_initial_mode
     if @options[:search] == true
       'search'

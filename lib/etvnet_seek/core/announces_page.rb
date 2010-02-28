@@ -1,6 +1,3 @@
-require 'page/page'
-require 'browse_media_item'
-
 class AnnouncesPage < MediaPage
   ANNOUNCES_URL = BASE_URL + "/announces.html"
 

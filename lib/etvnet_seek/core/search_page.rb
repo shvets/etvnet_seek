@@ -1,5 +1,3 @@
-require 'page/media_page'
-
 class SearchPage < MediaPage
   SEARCH_URL = BASE_URL + "/cgi-bin/video/eitv_browse.fcgi?action=search"
 

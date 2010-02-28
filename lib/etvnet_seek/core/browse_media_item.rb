@@ -1,5 +1,3 @@
-require 'media_item'
-
 class BrowseMediaItem < MediaItem
   attr_accessor :folder, :showtime, :year, :duration, :rating_image, :image
 

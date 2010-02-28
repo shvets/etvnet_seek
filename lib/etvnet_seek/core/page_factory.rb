@@ -1,11 +1,22 @@
-require 'page/main_page'
-require 'page/search_page'
-require 'page/media_page'
-require 'page/freetv_page'
-require 'page/base_page'
-require 'page/channels_page'
-require 'page/group_page'
-require 'page/announces_page'
+
+require 'etvnet_seek/core/media_item'
+require 'etvnet_seek/core/media_info'
+require 'etvnet_seek/core/browse_media_item'
+require 'etvnet_seek/core/channel_media_item'
+require 'etvnet_seek/core/group_media_item'
+
+require 'etvnet_seek/core/service_call'
+require 'etvnet_seek/core/page'
+require 'etvnet_seek/core/base_page'
+require 'etvnet_seek/core/media_page'
+require 'etvnet_seek/core/main_page'
+require 'etvnet_seek/core/search_page'
+require 'etvnet_seek/core/freetv_page'
+require 'etvnet_seek/core/channels_page'
+require 'etvnet_seek/core/group_page'
+require 'etvnet_seek/core/announces_page'
+require 'etvnet_seek/core/access_page'
+require 'etvnet_seek/core/login_page'
 
 class PageFactory
   def self.create mode, params = []

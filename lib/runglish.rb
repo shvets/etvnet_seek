@@ -1,4 +1,4 @@
-# Converts file names in directory recursively from Russian to Runglish.
+# Converts file names in directory recursively from Russian to Runglish and vice versa.
 #
 # Runglish stands for Russian text in Latin letters.
 
