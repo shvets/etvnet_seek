@@ -1,5 +1,5 @@
 class ArchiveMediaItem < MediaItem
-  attr_accessor :folder, :showtime, :duration, :year, :rating_image, :rating
+  attr_accessor :folder, :showtime, :duration, :year, :rating_image, :rating, :channel
 
   def folder?
     folder == true

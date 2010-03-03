@@ -14,10 +14,12 @@ class ArchiveMediaPage < BasePage
 
         tr = item.parent.parent.parent
         showtime = tr.css("td[1]").text.strip
-        rating_image = tr.css("td[2] img").at(0).attributes['src'].value.strip if tr.css("td[2] img").at(0)
+        rating_image = tr.css("td[2] img").at(0) ? tr.css("td[2] img").at(0).attributes['src'].value.strip : ""
         rating = tr.css("td[3]").text.strip
 
-        duration = ""
+        duration = tr.css("td[6]").text.strip
+        year = tr.css("td[7]") ? tr.css("td[7]").text.strip : ""
+        channel = tr.css("td[8]") ? tr.css("td[8]").text.strip : ""
 
         if link =~ /action=browse_container/
           folder = true
@@ -33,8 +35,9 @@ class ArchiveMediaPage < BasePage
         record.rating_image = rating_image
         record.rating = rating
         record.showtime = showtime
-        #record.year = year
         record.duration = duration
+        record.year = year
+        record.channel = channel
 
         list << record
       end
