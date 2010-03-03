@@ -1,5 +1,6 @@
 
 require 'etvnet_seek/core/media_item'
+require 'etvnet_seek/core/archive_media_item'
 require 'etvnet_seek/core/media_info'
 require 'etvnet_seek/core/browse_media_item'
 require 'etvnet_seek/core/channel_media_item'
@@ -9,6 +10,7 @@ require 'etvnet_seek/core/service_call'
 require 'etvnet_seek/core/page'
 require 'etvnet_seek/core/base_page'
 require 'etvnet_seek/core/media_page'
+require 'etvnet_seek/core/archive_media_page'
 require 'etvnet_seek/core/main_page'
 require 'etvnet_seek/core/search_page'
 require 'etvnet_seek/core/freetv_page'
@@ -41,6 +43,8 @@ class PageFactory
         FreetvPage.new
       when 'media' then
         MediaPage.new url
+      when 'archive_media' then
+        ArchiveMediaPage.new url
       when 'access' then
         AccessPage.new
       when 'login' then

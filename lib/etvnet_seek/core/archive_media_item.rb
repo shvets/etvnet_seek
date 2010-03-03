@@ -1,10 +1,5 @@
-class BrowseMediaItem < MediaItem
-  attr_accessor :folder, :showtime, :year, :duration
-  #, :image
-
-  def initialize(text, link)
-    super(text, link)
-  end
+class ArchiveMediaItem < MediaItem
+  attr_accessor :folder, :showtime, :duration, :year, :rating_image, :rating
 
   def folder?
     folder == true
@@ -30,9 +25,11 @@ class BrowseMediaItem < MediaItem
     buffer += " --- #{showtime}" if showtime
 
     buffer += " (#{media_file})" if not media_file.nil? and media_file.size > 0
-    buffer += " --- #{year}" if not year.nil? and year.size > 2
     buffer += " --- #{duration}" if not duration.nil? and duration.size > 0
-    #buffer += " --- #{image}" if image
+    buffer += " --- #{year}" if not year.nil? and year.size > 2
+    
+    buffer += " --- #{rating_image}" if rating_image
+    buffer += " --- #{rating}" if rating
 
     buffer
   end

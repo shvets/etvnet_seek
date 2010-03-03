@@ -65,7 +65,7 @@ class Main
             end
           elsif mode == 'channels'
             if user_selection.archive?
-              process('media', current_item.archive_link)
+              process('archive_media', current_item.archive_link)
             else
               process('media', current_item.link)
             end
@@ -126,7 +126,7 @@ class Main
   end
 
   def display_bottom_menu_part mode
-    puts "<number> => today; <number>.a => archive" if mode == 'channels'
+    puts "<number> => today; <number> a => archive" if mode == 'channels'
     puts "q. to exit"
   end
 

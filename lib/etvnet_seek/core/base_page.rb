@@ -106,10 +106,6 @@ class BasePage < Page
           href = link.attributes['href'].value
 
           list << MediaItem.new(text, href)
-        elsif item.children.size == 1
-          if list.all? { |e| e.text != item.text }
-            list << MediaItem.new(item.text, nil)
-          end
         end
       end
     end
