@@ -10,4 +10,8 @@ class ChannelMediaItem < MediaItem
   def channel
     link[link.index("channel=") + "channel=".size, link.size-1]
   end
+
+  def to_s
+    super + " (#{channel})"
+  end
 end

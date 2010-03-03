@@ -4,7 +4,7 @@ require "rake"
 
 Gem::Specification.new do |s|
   s.name = %q{etvnet_seek}
-  s.version = "0.4.0"
+  s.version = "0.5.0"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
  
@@ -20,7 +20,7 @@ Gem::Specification.new do |s|
   s.homepage = %q{http://github.com/shvets/etvnet_seek}
   s.require_paths = ["lib"]
   s.rubyforge_project = %q{etvnet_seek}
-  s.rubygems_version = %q{1.3.2}
+  s.rubygems_version = %q{1.3.5}
   s.summary = %q{Command line tool for getting mms urls from etvnet service.}
 
   if s.respond_to? :specification_version then

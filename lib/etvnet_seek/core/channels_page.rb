@@ -27,7 +27,7 @@ class ChannelsPage < MediaPage
           archive_link = archive_href.attributes['href'].value unless archive_href.nil?
         end
 
-        list << ChannelMediaItem.new(text, link, archive_link)
+        list << ChannelMediaItem.new(text, link, archive_link) unless link.nil?
       end
     end
 

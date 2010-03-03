@@ -30,4 +30,8 @@ class LinkInfo
     media_info.link
   end
 
+  def rtsp_link
+    media_info.rtsp_link
+  end
+
 end
