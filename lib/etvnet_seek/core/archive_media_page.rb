@@ -17,8 +17,8 @@ class ArchiveMediaPage < BasePage
         rating_image = tr.css("td[2] img").at(0) ? tr.css("td[2] img").at(0).attributes['src'].value.strip : ""
         rating = tr.css("td[3]").text.strip
 
-        duration = tr.css("td[6]").text.strip
-        year = tr.css("td[7]") ? tr.css("td[7]").text.strip : ""
+        year = tr.css("td[6]") ? tr.css("td[6]").text.strip : ""
+        duration = tr.css("td[7]").text.strip ? tr.css("td[7]").text.strip : ""
         channel = tr.css("td[8]") ? tr.css("td[8]").text.strip : ""
 
         if link =~ /action=browse_container/
@@ -26,8 +26,6 @@ class ArchiveMediaPage < BasePage
           link = link[Page::BASE_URL.size..link.size]
         else
           folder = false
-          duration = item.parent.parent.next.next.next.next.content.strip unless
-            item.parent.parent.next.next.next.next.nil?
         end
 
         record = ArchiveMediaItem.new(text, link)
