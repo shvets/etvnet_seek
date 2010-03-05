@@ -19,7 +19,7 @@ class MediaItem
   end
 
   def has_media_links?
-    Nokogiri::HTML(open(Page::BASE_URL + current_item.link)).css("b a.media_file").size > 0
+    Nokogiri::HTML(open(Page::BASE_URL + link)).css("b a.media_file").size > 0
   end
 
   def ==(object)
