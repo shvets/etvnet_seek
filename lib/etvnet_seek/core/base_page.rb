@@ -1,4 +1,17 @@
 class BasePage < Page
+#  def items
+#    list = []
+#
+#    document.css("#tblCategories a").each do |item|
+#      text = item.css("img").at(0).attributes['alt'].value
+#      href = item['href']
+#
+#      list << MediaItem.new(text, href)
+#    end
+#
+#    list
+#  end
+
   def items
     list = []
 
@@ -6,12 +19,16 @@ class BasePage < Page
       text = item.css("img").at(0).attributes['alt'].value
       href = item['href']
 
-      list << MediaItem.new(text, href)
+       unless href =~ /(forum|action=browse_persons|valentines2010)/
+        list << MediaItem.new(text, href)
+       end
     end
+
+    list.delete_at(0)
 
     list
   end
-
+  
   def title
     document.css("title").text
   end

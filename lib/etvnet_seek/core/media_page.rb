@@ -12,17 +12,25 @@ class MediaPage < BasePage
 
         text += additional_info unless additional_info.nil?
 
-        showtime = item.parent.parent.parent.css('td[1]').text.strip
-        year = item.parent.parent.next.next.content.strip
-        duration = ""
+        tr = item.parent.parent.parent
+
+#        showtime = item.parent.parent.parent.css('td[1]').text.strip
+#        year = item.parent.parent.next.next.content.strip
+#        duration = ""
+
+        showtime = tr.css("td[1]").text.strip
+
+        year = tr.css("td[4]") ? tr.css("td[4]").text.strip : ""
+        duration = tr.css("td[5]").text.strip ? tr.css("td[5]").text.strip : ""
+        channel = tr.css("td[6]") ? tr.css("td[6]").text.strip : ""
 
         if link =~ /action=browse_container/
           folder = true
           link = link[Page::BASE_URL.size..link.size]
         else
           folder = false
-          duration = item.parent.parent.next.next.next.next.content.strip unless
-            item.parent.parent.next.next.next.next.nil?
+#          duration = item.parent.parent.next.next.next.next.content.strip unless
+#            item.parent.parent.next.next.next.next.nil?
         end
 
         record = BrowseMediaItem.new(text, link)
@@ -30,7 +38,8 @@ class MediaPage < BasePage
         record.showtime = showtime
         record.year = year
         record.duration = duration
-
+        record.channel = channel
+        
         list << record
       end
     end

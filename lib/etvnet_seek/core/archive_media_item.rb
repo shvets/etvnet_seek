@@ -27,7 +27,8 @@ class ArchiveMediaItem < MediaItem
     buffer += " (#{media_file})" if not media_file.nil? and media_file.size > 0
     buffer += " --- #{duration}" if not duration.nil? and duration.size > 0
     buffer += " --- #{year}" if not year.nil? and year.size > 2
-    
+
+    buffer += " --- #{channel}" if channel    
     buffer += " --- #{rating_image}" if rating_image
     buffer += " --- #{rating}" if rating
 

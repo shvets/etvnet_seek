@@ -21,7 +21,7 @@ Gem::Specification.new do |s|
   s.require_paths = ["lib"]
   s.rubyforge_project = %q{etvnet_seek}
   s.rubygems_version = %q{1.3.6}
-  s.summary = %q{Command line tool for getting mms urls from etvnet service.}
+  s.summary = %q{Accessing etvnet service from command line.}
 
   if s.respond_to? :specification_version then
     s.specification_version = 2

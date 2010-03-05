@@ -28,7 +28,7 @@ class PageFactory
       when 'search' then
         SearchPage.new *params
       when 'main' then
-        MainPage.new
+        BasePage.new
       when 'channels' then
         ChannelsPage.new
       when 'best_ten' then
