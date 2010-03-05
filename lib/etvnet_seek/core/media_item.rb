@@ -1,3 +1,6 @@
+require 'nokogiri'
+require 'open-uri'
+
 class MediaItem
   attr_reader :text, :link, :additional_info
   attr_reader :underscore_name, :media_file
@@ -13,6 +16,10 @@ class MediaItem
 
   def folder?
     false
+  end
+
+  def has_media_links?
+    Nokogiri::HTML(open(Page::BASE_URL + current_item.link)).css("b a.media_file").size > 0
   end
 
   def ==(object)
