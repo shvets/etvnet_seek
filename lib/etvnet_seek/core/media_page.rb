@@ -14,12 +14,7 @@ class MediaPage < BasePage
 
         tr = item.parent.parent.parent
 
-#        showtime = item.parent.parent.parent.css('td[1]').text.strip
-#        year = item.parent.parent.next.next.content.strip
-#        duration = ""
-
         showtime = tr.css("td[1]").text.strip
-
         year = tr.css("td[4]") ? tr.css("td[4]").text.strip : ""
         duration = tr.css("td[5]").text.strip ? tr.css("td[5]").text.strip : ""
         channel = tr.css("td[6]") ? tr.css("td[6]").text.strip : ""
@@ -29,8 +24,6 @@ class MediaPage < BasePage
           link = link[Page::BASE_URL.size..link.size]
         else
           folder = false
-#          duration = item.parent.parent.next.next.next.next.content.strip unless
-#            item.parent.parent.next.next.next.next.nil?
         end
 
         record = BrowseMediaItem.new(text, link)

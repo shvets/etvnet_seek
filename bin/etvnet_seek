@@ -21,6 +21,6 @@ if not link_info.nil? and link_info.resolved?
 
   launch = ask("Launch link (y/n)?")
 
-  client.launch_link link_info.link unless launch =~ /n/i
+  client.launch_link link_info.link if launch =~ /y/i
 end
 

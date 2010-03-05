@@ -1,16 +1,4 @@
 class BasePage < Page
-#  def items
-#    list = []
-#
-#    document.css("#tblCategories a").each do |item|
-#      text = item.css("img").at(0).attributes['alt'].value
-#      href = item['href']
-#
-#      list << MediaItem.new(text, href)
-#    end
-#
-#    list
-#  end
 
   def items
     list = []

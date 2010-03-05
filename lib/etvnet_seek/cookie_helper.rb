@@ -1,6 +1,3 @@
-require 'net/http'
-require 'uri'
-
 class CookieHelper
   
   def initialize cookie_file_name

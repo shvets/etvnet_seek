@@ -70,7 +70,12 @@ class Main
               process('media', current_item.link)
             end
           else # media : announces, freetv, category
-            if current_item.folder? or current_item.link =~ /action=view_recommended/
+            require 'nokogiri'
+            require 'open-uri'
+
+            size = Nokogiri::HTML(open(Page::BASE_URL + current_item.link)).css("b a.media_file").size
+
+            if current_item.folder? or current_item.link =~ /action=view_recommended/ or size > 0
               process('media', current_item.link)
             else
               process("access", current_item)
