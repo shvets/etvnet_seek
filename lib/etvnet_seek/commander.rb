@@ -6,7 +6,7 @@ class Commander
   end
 
   def search_mode?
-    @options[:runglish]
+    @options[:search]
   end
 
   def runglish_mode?
@@ -16,14 +16,14 @@ class Commander
   def get_initial_mode
     if @options[:search] == true
       'search'
-    elsif @options[:best_ten] == true
-      'best_ten'
-    elsif @options[:popular] == true
-      'popular'
+    elsif @options[:best_hundred] == true
+      'best_hundred'
     elsif @options[:we_recommend] == true
       'we_recommend'
     elsif @options[:channels] == true
       'channels'
+    elsif @options[:catalog] == true
+      'catalog'
     else
       'main'
     end
@@ -52,14 +52,9 @@ class Commander
         options[:runglish] = true
       end
 
-      options[:best_ten] = false
-      opts.on( '-b', '--best-ten', 'Display Best 10 Menu' ) do
-        options[:best_ten] = true
-      end
-
-      options[:popular] = false
-      opts.on( '-p', '--popular', 'Display Popular Menu' ) do
-        options[:popular] = true
+      options[:best_hundred] = false
+      opts.on( '-b', '--best-hundred', 'Display Best 100 Menu' ) do
+        options[:best_hundred] = true
       end
 
       options[:we_recommend] = false
@@ -70,6 +65,11 @@ class Commander
       options[:channels] = false
       opts.on( '-c', '--channels', 'Display Channels Menu' ) do
         options[:channels] = true
+      end
+
+      options[:catalog] = false
+      opts.on( '-a', '--catalog', 'Display Catalog Menu' ) do
+        options[:popular] = true
       end
 
       options[:main] = false

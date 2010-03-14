@@ -1,6 +1,6 @@
 
 require 'etvnet_seek/core/media_item'
-require 'etvnet_seek/core/archive_media_item'
+require 'etvnet_seek/core/catalog_item'
 require 'etvnet_seek/core/media_info'
 require 'etvnet_seek/core/browse_media_item'
 require 'etvnet_seek/core/channel_media_item'
@@ -8,9 +8,9 @@ require 'etvnet_seek/core/group_media_item'
 
 require 'etvnet_seek/core/service_call'
 require 'etvnet_seek/core/page'
+require 'etvnet_seek/core/home_page'
 require 'etvnet_seek/core/base_page'
 require 'etvnet_seek/core/media_page'
-require 'etvnet_seek/core/archive_media_page'
 require 'etvnet_seek/core/search_page'
 require 'etvnet_seek/core/freetv_page'
 require 'etvnet_seek/core/channels_page'
@@ -27,11 +27,11 @@ class PageFactory
       when 'search' then
         SearchPage.new *params
       when 'main' then
-        BasePage.new
+        HomePage.new
       when 'channels' then
         ChannelsPage.new
-      when 'best_ten' then
-        BestTenPage.new
+      when 'best_hundred' then
+        BestHundredPage.new
       when 'popular' then
         PopularPage.new
       when 'we_recommend' then
@@ -42,8 +42,6 @@ class PageFactory
         FreetvPage.new
       when 'media' then
         MediaPage.new url
-      when 'archive_media' then
-        ArchiveMediaPage.new url
       when 'access' then
         AccessPage.new
       when 'login' then

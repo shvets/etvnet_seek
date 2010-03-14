@@ -4,21 +4,14 @@ class GroupPage < BasePage
   def get_typical_items tag_name
     list = []
 
-    document.css(tag_name).at(0).next.children.each do |table|
-      href = table.css("a").at(0)
-
+    document.css(tag_name).each do |item|
+      href = item.css("a").at(0)
+      
       unless href.nil?
         link = href.attributes['href'].value
         text = href.children.at(0).content
-        channel = ""
-
-        if link =~ /media/
-          additional_info = additional_info(href, 1)
-
-          channel = additional_info.gsub(/\(|\)/, '') unless additional_info.nil?
-        end
         
-        list << GroupMediaItem.new(text, link, channel)
+        list << GroupMediaItem.new(text, link)
       end
     end
 
@@ -26,20 +19,23 @@ class GroupPage < BasePage
   end
 end
 
-class BestTenPage < GroupPage
+class BestHundredPage < GroupPage
   def items
-    get_typical_items("#tbl10best")
-  end
-end
+    list = get_typical_items("ul.best-list li")
 
-class PopularPage < GroupPage
-  def items
-    get_typical_items("#tblyearago")
+    node = document.css("ul.best-list").at(0).next
+
+    unless node.nil?
+      link = node.attributes['href'].value
+      text = node.children.at(0).content
+
+      list << list << GroupMediaItem.new(text, link)
+    end
   end
 end
 
 class WeRecommendPage < GroupPage
   def items
-    get_typical_items("#tblfree")
+    get_typical_items("ul.recomendation-list li")
   end
 end

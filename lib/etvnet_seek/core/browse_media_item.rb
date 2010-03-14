@@ -1,5 +1,5 @@
 class BrowseMediaItem < MediaItem
-  attr_accessor :folder, :showtime, :year, :duration, :image, :rating_image, :channel
+  attr_accessor :folder, :showtime, :year, :duration, :image, :rating_image, :rating, :channel
 
   def initialize(text, link)
     super(text, link)
@@ -34,7 +34,7 @@ class BrowseMediaItem < MediaItem
     buffer += " --- #{channel}" if channel 
     buffer += " --- #{image}" if image
     buffer += " --- #{rating_image}" if rating_image
-
+    
     buffer
   end
 

@@ -54,23 +54,32 @@ class Main
 
           if mode == 'main'
             case current_item.link
-              when /announces.html/ then
+              when '/' then
+                process("main")
+              when /announces/ then
                 process('announces')
-              when /freeTV.html/ then
+              when /freeTV/ then
                 process('freetv')
-              when /category=/ then
+#              when /category=/ then
+#                process('media', current_item.link)
+              when /aired_today/ then
                 process('media', current_item.link)
-              when /action=channels/ then
+              when /catalog/ then
+                process('media', nil)
+              when /tv_channels/ then
                 process('channels', current_item.link)
             end
           elsif mode == 'channels'
-            if user_selection.archive?
-              process('archive_media', current_item.archive_link)
+            if user_selection.catalog?
+              process('media', current_item.catalog_link)
             else
               process('media', current_item.link)
             end
+          elsif mode == 'catalog'
+            process('media', current_item.link)
           else # media : announces, freetv, category
-            if current_item.folder? or current_item.link =~ /action=view_recommended/ or current_item.has_media_links?
+            #if current_item.folder? or current_item.link =~ /action=view_recommended/ or current_item.has_media_links?
+            if current_item.folder? or current_item.link =~ /(catalog|tv_channel)/
               process('media', current_item.link)
             else
               process("access", current_item)
@@ -87,8 +96,8 @@ class Main
     if cookie.nil?
       process("login", item)
     else
-      result = CookieHelper.get_auth_and_expires(cookie)
-      cookie_expire_date =  DateTime.strptime(result[1], "%A, %d-%b-%Y %H:%M:%S %Z")
+      expires = CookieHelper.get_expires(cookie)
+      cookie_expire_date =  DateTime.strptime(expires, "%A, %d-%b-%Y %H:%M:%S %Z")
 
       if cookie_expire_date < DateTime.now # cookie expired?
         @cookie_helper.delete_cookie
@@ -126,7 +135,7 @@ class Main
   end
 
   def display_bottom_menu_part mode
-    puts "<number> => today; <number> a => archive" if mode == 'channels'
+    puts "<number> => today; <number> c => catalog" if mode == 'channels'
     puts "q. to exit"
   end
 
@@ -134,7 +143,7 @@ class Main
     if RUBY_PLATFORM =~ /(win|w)32$/
       `start wmplayer #{link}`
     elsif RUBY_PLATFORM =~ /darwin/
-      `open #{link}`
+      `open '#{link}'`
     end
   end
 

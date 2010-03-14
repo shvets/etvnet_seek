@@ -1,5 +1,5 @@
 class FreetvPage < MediaPage
-  FREETV_URL = BASE_URL + "/freeTV.html"
+  FREETV_URL = BASE_URL + "/freeTV/"
 
   def initialize
     super(FREETV_URL)
@@ -8,28 +8,25 @@ class FreetvPage < MediaPage
   def category_breadcrumbs
     []
   end
-  
- def items
+
+  def items
     list = []
 
-    document.css("table tr").each do |item|
-      node = item.css("td img")
-      if node.size > 0
-        text = node.at(0).parent.css("a")
-        unless text.to_s.size == 0
-          link = node.at(0).parent.css("a")
-          text = link.at(0).text.gsub(/\s\s+/, ' ')
-          rating_image = node.at(0).attributes['src']
-          image = link.at(0).parent.parent.previous.css("td img").at(0).attributes['src'].value.strip
-          
-          href = link.at(0).attributes['href'].value.strip
+    document.css(".gallery ul li").each do |item|
+      text = item.css("a span").text.strip
+      link = item.css("a").at(0)
+      image = item.css("a img").at(0).attributes['src'].value.strip
+      rating_image = item.css("a em img").at(0).attributes['src'].value.strip
 
-          record = BrowseMediaItem.new(text, href)
-          record.rating_image = rating_image
-          record.image = image
+      unless link.nil?
+        href = link.attributes['href'].value
 
-          list << record
-        end
+        record = BrowseMediaItem.new(text, href)
+
+        record.image = image
+        record.rating_image = rating_image
+
+        list << record
       end
     end
 

@@ -44,9 +44,9 @@ class MediaItem
 
   def extract_media_file
     return nil if link.nil?
+     #/zhenschinyi-hotyat-tantsevat/204563/
+    result = link.split('/')
 
-    result = link.match(/(\w*)\/(\w*)\/(\w*)\/([\w|-]*)/)
-
-    (not result.nil? and result.size > 2) ? result[3] : ""
+    (not result.nil? and result.size > 2) ? result[2] : ""
   end
 end

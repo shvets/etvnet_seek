@@ -17,7 +17,7 @@ link_info = client.seek ARGV.join(' ')
 
 if not link_info.nil? and link_info.resolved?
   puts "Link #{link_info.text} [#{link_info.name} (#{link_info.media_file})]: #{link_info.link}"
-  puts "#{link_info.rtsp_link}"
+  #puts "#{link_info.rtsp_link}"
 
   launch = ask("Launch link (y/n)?")
 

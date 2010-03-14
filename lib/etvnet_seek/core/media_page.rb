@@ -2,39 +2,35 @@ class MediaPage < BasePage
   def items
     list = []
 
-    document.css("b a.media_file").each do |item|
-      link = item.attributes['href'].value
-      new_link = list.select {|l| l.link == link}.empty?
+    document.css(".conteiner table#table-onecolumn tr").each do |item|
+      showtime = item.css("td[1]").text.strip
+      name = item.css("td[2]").text.strip
+      rating_image = item.css("td[3] img").at(0) ? item.css("td[3] img").at(0).attributes['src'].value.strip : ""
+      rating = item.css("td[4]") ? item.css("td[4]").text.strip : ""
+      duration = item.css("td[5]") ? item.css("td[5]").text.strip : ""
+      year = item.css("td[6]") ? item.css("td[6]").text.strip : ""
+      channel = item.css("td[7]") ? item.css("td[7]").text.strip : ""
 
-      if new_link
-        text = item.content.strip
-        additional_info = additional_info(item, 1)
+      link = item.css("td[2] a").at(0).attributes['href'].value
 
-        text += additional_info unless additional_info.nil?
-
-        tr = item.parent.parent.parent
-
-        showtime = tr.css("td[1]").text.strip
-        year = tr.css("td[4]") ? tr.css("td[4]").text.strip : ""
-        duration = tr.css("td[5]").text.strip ? tr.css("td[5]").text.strip : ""
-        channel = tr.css("td[6]") ? tr.css("td[6]").text.strip : ""
-
-        if link =~ /action=browse_container/
-          folder = true
-          link = link[Page::BASE_URL.size..link.size]
-        else
-          folder = false
-        end
-
-        record = BrowseMediaItem.new(text, link)
-        record.folder = folder
-        record.showtime = showtime
-        record.year = year
-        record.duration = duration
-        record.channel = channel
-        
-        list << record
+      additional_info = additional_info(item.css("td[2] a").at(0), 2)
+      
+      if additional_info.strip.size > 0
+        folder = true
+      else
+        folder = false
       end
+
+      record = BrowseMediaItem.new(name, link)
+      record.folder = folder
+      record.showtime = showtime
+      record.year = year
+      record.duration = duration
+      record.channel = channel
+      record.rating_image = rating_image
+      record.rating = rating
+
+      list << record
     end
 
     list

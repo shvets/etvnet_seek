@@ -1,7 +1,7 @@
 require 'nokogiri'
 
 class Page < ServiceCall
-  BASE_URL = "http://www.etvnet.ca"
+  BASE_URL = "http://www.etvnet.com"
 
   attr_reader :document
 

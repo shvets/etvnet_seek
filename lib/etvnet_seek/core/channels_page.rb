@@ -1,6 +1,5 @@
 class ChannelsPage < MediaPage
-  BROWSE_URL   = BASE_URL + "/cgi-bin/video/eitv_browse.fcgi"
-  CHANNELS_URL = BROWSE_URL + "?action=channels"
+  CHANNELS_URL = BASE_URL + "/tv_channels/"
 
   def initialize url = CHANNELS_URL
     super(url)
@@ -9,25 +8,25 @@ class ChannelsPage < MediaPage
   def items
     list = []
 
-    document.css("table table table.rounded_white table tr").each do |item|
-      links = item.css("table tr td a")
+    document.css(".table-all-kanali tr").each do |item|
+      links = item.css("td a")
 
       text = item.children.at(0).text.strip
 
       if text.size > 0
         link = nil
-        archive_link = nil
+        catalog_link = nil
 
         if links.size > 0
           href = links[0]
-          archive_href = links[1]
+          catalog_href = links[1]
 
           link = href.attributes['href'].value unless href.nil?
 
-          archive_link = archive_href.attributes['href'].value unless archive_href.nil?
+          catalog_link = catalog_href.attributes['href'].value unless catalog_href.nil?
         end
 
-        list << ChannelMediaItem.new(text, link, archive_link) unless link.nil?
+        list << ChannelMediaItem.new(text, link, catalog_link) unless link.nil?
       end
     end
 

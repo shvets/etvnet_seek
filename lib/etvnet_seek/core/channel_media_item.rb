@@ -1,14 +1,14 @@
 class ChannelMediaItem < MediaItem
-  attr_reader :archive_link
+  attr_reader :catalog_link
 
-  def initialize(text, link, archive_link)
+  def initialize(text, link, catalog_link)
     super(text, link)
 
-    @archive_link = archive_link
+    @catalog_link = catalog_link
   end
 
   def channel
-    link[link.index("channel=") + "channel=".size, link.size-1]
+    link.scan(/\/(\w*)/)[2]
   end
 
   def to_s

@@ -3,13 +3,11 @@ class BasePage < Page
   def items
     list = []
 
-    document.css("#tblCategories a").each do |item|
+    document.css("#nav a").each do |item|
       text = item.css("img").at(0).attributes['alt'].value
       href = item['href']
 
-       unless href =~ /(forum|action=browse_persons|valentines2010)/
-        list << MediaItem.new(text, href)
-       end
+      list << MediaItem.new(text, href)
     end
 
     list.delete_at(0)

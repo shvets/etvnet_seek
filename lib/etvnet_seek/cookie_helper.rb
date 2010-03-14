@@ -9,6 +9,8 @@ class CookieHelper
   end
 
   def save_cookie cookie
+    return if cookie.nil?
+    
     File.open(@cookie_file_name, 'w') { |file| file.puts cookie }
   end
 
@@ -16,33 +18,58 @@ class CookieHelper
     File.delete @cookie_file_name if File.exist? @cookie_file_name
   end
 
-  def self.get_auth_and_expires cookie
-    length = "auth=".length
+#  def self.get_expires cookie
+#    length = "expires=".length
+#
+#    #auth = ""
+#    expires = ""
+#
+#    fragment = cookie
+#
+#    while true do
+#      position = fragment.index("expires=")
+#
+#      break if position == -1
+#
+#      if fragment[position+length..position+length] != ";"
+#        right_position = fragment[position..-1].index(";")
+#        #auth = fragment[position+length..position+right_position-1]
+#
+#        pos1 = position+right_position+1+"expires=".length+1
+#        pos2 = fragment[pos1..-1].index(";")
+#        expires = fragment[pos1..pos1+pos2-1]
+#        break
+#      else
+#        fragment = fragment[position+length+1..-1]
+#      end
+#    end
+#
+#    [auth, expires]
+#  end
 
-    auth = ""
+  def self.get_expires cookie
+    length = "expires=".length
+
     expires = ""
 
     fragment = cookie
 
     while true do
-      position = fragment.index("auth=")
+      position = fragment.index("expires=")
 
       break if position == -1
 
       if fragment[position+length..position+length] != ";"
         right_position = fragment[position..-1].index(";")
-        auth = fragment[position+length..position+right_position-1]
+        expires = fragment[position+length..position+right_position-1]
 
-        pos1 = position+right_position+1+"expires=".length+1
-        pos2 = fragment[pos1..-1].index(";")
-        expires = fragment[pos1..pos1+pos2-1]
         break
       else
         fragment = fragment[position+length+1..-1]
       end
     end
 
-    [auth, expires]
+    expires
   end
 
   def self.get_username cookie

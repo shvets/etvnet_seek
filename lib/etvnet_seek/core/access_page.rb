@@ -1,18 +1,19 @@
 class AccessPage < ServiceCall
-  ACCESS_URL = Page::BASE_URL + "/cgi-bin/video/access.fcgi"
+  ACCESS_URL = Page::BASE_URL + "/watch_new/"
 
   def initialize
     super(ACCESS_URL)
   end
 
   def request_media_info media_file, cookie
-    params = { 'action' => 'start_video', 'bitrate' => '600',
-               'media_file'=> media_file, 'replay' => '1', 'skin' => 'JSON' }
+    params = { 'bitrate' => '2', 'view' => 'submit'}
     headers = { 'Cookie' => cookie }
 
+    @url += "#{media_file}/"
+    
     response = post(params, headers)
 
-    MediaInfo.new JSON.parse(response.body)["PARAMETERS"]
+    MediaInfo.new Nokogiri::HTML(response.body).css("ref").at(0).attributes["href"].text
   end
 
 end

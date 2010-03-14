@@ -1,5 +1,5 @@
 class AnnouncesPage < MediaPage
-  ANNOUNCES_URL = BASE_URL + "/announces.html"
+  ANNOUNCES_URL = BASE_URL + "/announces/"
 
   def initialize()
     super(ANNOUNCES_URL)
@@ -12,20 +12,16 @@ class AnnouncesPage < MediaPage
   def items
     list = []
 
-    document.css("table tr td div").each do |item|
-      unless item.css("a").at(0).nil?
-        image = item.css("img").at(0).attributes['src'].value.strip
+    document.css(".gallery ul li").each do |item|
+      text = item.css("a img").at(0).attributes['alt'].value.strip
+      link = item.css("a").at(1)
 
-        unless image == 'images/banner_announces.jpg'
-          text = item.css("img").at(0).attributes['alt'].value.strip
-          href = item.css("a").at(0).attributes['href'].value
-          image = item.css("img").at(0).attributes['src'].value.strip
+      unless link.nil?
+        href = link.attributes['href'].value
 
-          record = BrowseMediaItem.new(text, href)
-          record.image = image
+        record = BrowseMediaItem.new(text, href)
 
-          list << record
-        end
+        list << record
       end
     end
 

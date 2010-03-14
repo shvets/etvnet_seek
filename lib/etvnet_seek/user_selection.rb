@@ -8,6 +8,7 @@ class UserSelection
 
     @index = result[0].to_i-1
     @quit = (result & ['q', 'Q']).empty? ? false : true
+    @catalog = (result & ['c', 'C']).empty? ? false : true
   end
 
   def quit?
@@ -18,8 +19,8 @@ class UserSelection
     @blank
   end
 
-  def archive?
-    @archive
+  def catalog?
+    @catalog
   end
 
 end

@@ -1,4 +1,4 @@
-class ArchiveMediaItem < MediaItem
+class CatalogItem < MediaItem
   attr_accessor :folder, :showtime, :duration, :year, :rating_image, :rating, :channel
 
   def folder?

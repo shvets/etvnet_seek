@@ -11,9 +11,9 @@
 Usage: etvnet_seek [options] keywords
     -s, --search                     Display Search Menu
     -r, --runglish                   Enter russian keywords in translit
-    -b, --best-ten                   Display Best 10 Menu
-    -p, --popular                    Display Popular Menu
+    -b, --best-hunred                Display Best 100 Menu
     -w, --we-recommend               Display We recommend Menu
     -c, --channels                   Display Channels Menu
+    -a, --catalog                    Display Catalog Menu
     -m, --main                       Display Main Menu
     -h, --help                       Display this screen
