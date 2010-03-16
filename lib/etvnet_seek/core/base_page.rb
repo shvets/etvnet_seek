@@ -1,26 +1,26 @@
 class BasePage < Page
 
-  def items
-    list = []
-
-    document.css("#nav a").each do |item|
-      text = item.css("img").at(0).attributes['alt'].value
-      href = item['href']
-
-      list << MediaItem.new(text, href)
-    end
-
-    list.delete_at(0)
-
-    list
-  end
+#  def items
+#    list = []
+#
+#    document.css("#nav a").each do |item|
+#      text = item.css("img").at(0).attributes['alt'].value
+#      href = item['href']
+#
+#      list << MediaItem.new(text, href)
+#    end
+#
+#    list.delete_at(0)
+#
+#    list
+#  end
   
   def title
     document.css("title").text
   end
 
   def page_title
-    document.css(".global_content .global_content h1").text
+    document.css(".conteiner h1").text
   end
 
   protected

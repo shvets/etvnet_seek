@@ -29,7 +29,7 @@ class BestHundredPage < GroupPage
       link = node.attributes['href'].value
       text = node.children.at(0).content
 
-      list << list << GroupMediaItem.new(text, link)
+      list << GroupMediaItem.new(text, link)
     end
   end
 end

@@ -60,12 +60,10 @@ class Main
                 process('announces')
               when /freeTV/ then
                 process('freetv')
-#              when /category=/ then
-#                process('media', current_item.link)
               when /aired_today/ then
                 process('media', current_item.link)
               when /catalog/ then
-                process('media', nil)
+                process('media', current_item.link)
               when /tv_channels/ then
                 process('channels', current_item.link)
             end
