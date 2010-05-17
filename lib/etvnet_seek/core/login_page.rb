@@ -14,11 +14,14 @@ class LoginPage < ServiceCall
 
     cookie = response.response['set-cookie']
 
+    p cookie
+
 #    unless cookie.nil?
 #      cookie = cleanup_cookie(cookie)
 #    end
 
-    cookie[0..cookie.index(";")-1]
+    cookie
+    #[0..cookie.index(";")-1]
   end
 
 #  private

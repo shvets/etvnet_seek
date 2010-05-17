@@ -48,6 +48,7 @@ class CookieHelper
 #  end
 
   def self.get_expires cookie
+    p cookie
     length = "expires=".length
 
     expires = ""

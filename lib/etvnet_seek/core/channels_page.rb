@@ -8,7 +8,7 @@ class ChannelsPage < MediaPage
   def items
     list = []
 
-    document.css(".table-all-kanali tr").each do |item|
+    document.css("#table-onecolumn-kanali tr").each do |item|
       links = item.css("td a")
 
       text = item.children.at(0).text.strip
