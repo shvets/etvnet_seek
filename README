@@ -4,11 +4,11 @@
 
 == Installing the Gem
     $ sudo gem sources -a http://gemcutter.org
-    $ sudo gem install etvnet_seek
+    $ sudo gem install etvnet-seek
 
 == Usage
 
-Usage: etvnet_seek [options] keywords
+Usage: etvnet-seek [options] keywords
     -s, --search                     Display Search Menu
     -r, --runglish                   Enter russian keywords in translit
     -b, --best-hunred                Display Best 100 Menu

@@ -42,7 +42,7 @@ class Commander
     optparse = OptionParser.new do |opts|
       # Set a banner, displayed at the top
       # of the help screen.
-      opts.banner = "Usage: etvnet_seek [options] keywords"
+      opts.banner = "Usage: etvnet-seek [options] keywords"
 
       options[:search] = false
       opts.on('-s', '--search', 'Display Search Menu') do

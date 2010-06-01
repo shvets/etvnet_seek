@@ -12,13 +12,13 @@ end
 begin
   require 'jeweler'
   Jeweler::Tasks.new do |gemspec|
-    gemspec.name = "etvnet_seek"
+    gemspec.name = "etvnet-seek"
     gemspec.summary = "Accessing etvnet service from command line."
     gemspec.description = "Command line tool for getting mms urls from etvnet service."
     gemspec.email = "alexander.shvets@gmail.com"
-    gemspec.homepage = "http://github.com/shvets/etvnet_seek"
+    gemspec.homepage = "http://github.com/shvets/etvnet-seek"
     gemspec.authors = ["Alexander Shvets"]
-    gemspec.files = FileList["CHANGES", "etvnet_seek.gemspec", "Rakefile", "README", "VERSION", "lib/**/*", "bin/**"]
+    gemspec.files = FileList["CHANGES", "etvnet-seek.gemspec", "Rakefile",  "Gemfile", "README", "VERSION", "lib/**/*", "bin/**"]
     gemspec.add_dependency("json_pure", ">= 1.2.0")
     gemspec.add_dependency("highline", ">= 1.5.1")
     gemspec.add_dependency("libxml-ruby", ">= 1.1.3")
@@ -27,7 +27,7 @@ begin
     gemspec.add_development_dependency "rspec", ">= 1.2.9"
     gemspec.add_development_dependency "mocha", ">= 0.9.7"
 
-    gemspec.executables = ['etvnet_seek']
+    gemspec.executables = ['etvnet-seek']
     gemspec.requirements = ["none"]
     gemspec.bindir = "bin"
   end
@@ -37,12 +37,12 @@ rescue LoadError
 end
 
 task :zip do
-  zip :archive => "etvnet_seek.zip", :dir => "."
+  zip :archive => "etvnet-seek.zip", :dir => "."
 end
 
 desc "Run gem code locally"
 task :"run:gem" do
-  command = "bin/etvnet_seek"
+  command = "bin/etvnet-seek"
   puts ruby("#{command}")
 end
 
