@@ -51,15 +51,10 @@ class Main
 
         if not user_selection.quit?
           current_item = items[user_selection.index]
-
           if mode == 'main'
             case current_item.link
               when '/' then
                 process("main")
-              when /announces/ then
-                process('announces')
-              when /freeTV/ then
-                process('freetv')
               when /aired_today/ then
                 process('media', current_item.link)
               when /catalog/ then
@@ -68,15 +63,20 @@ class Main
                 process('channels', current_item.link)
             end
           elsif mode == 'channels'
+            p user_selection.catalog?
             if user_selection.catalog?
               process('media', current_item.catalog_link)
             else
               process('media', current_item.link)
             end
+          elsif mode == 'new_items'
+            process('access', current_item)
+          elsif mode == 'premiere'
+            process('access', current_item)
           elsif mode == 'catalog'
+             p 'catalog'
             process('media', current_item.link)
-          else # media : announces, freetv, category
-            #if current_item.folder? or current_item.link =~ /action=view_recommended/ or current_item.has_media_links?
+          else # media
             if current_item.folder? or current_item.link =~ /(catalog|tv_channel)/
               process('media', current_item.link)
             else

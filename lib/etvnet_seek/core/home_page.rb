@@ -7,7 +7,7 @@ class HomePage < Page
       text = item.css("span").text.strip
       href = item['href']
       
-      unless href == '/' or href =~ /register/
+      unless href == '/' or href =~ /(person|help|register)/
         list << MediaItem.new(text, href)
       end
     end

@@ -1,6 +1,6 @@
 class Commander
   attr_accessor :mode
-  
+
   def initialize
     @options = parse_options
   end
@@ -18,12 +18,14 @@ class Commander
       'search'
     elsif @options[:best_hundred] == true
       'best_hundred'
-    elsif @options[:we_recommend] == true
-      'we_recommend'
     elsif @options[:channels] == true
       'channels'
     elsif @options[:catalog] == true
       'catalog'
+    elsif @options[:new_items] == true
+      'new_items'
+    elsif @options[:premiere] == true
+      'premiere'
     else
       'main'
     end
@@ -37,55 +39,65 @@ class Commander
     # OptionParser.
     options = {}
 
-    optparse = OptionParser.new do|opts|
+    optparse = OptionParser.new do |opts|
       # Set a banner, displayed at the top
       # of the help screen.
       opts.banner = "Usage: etvnet_seek [options] keywords"
 
       options[:search] = false
-      opts.on( '-s', '--search', 'Display Search Menu' ) do
+      opts.on('-s', '--search', 'Display Search Menu') do
         options[:search] = true
       end
 
       options[:runglish] = false
-      opts.on( '-r', '--runglish', 'Enter russian keywords in translit' ) do
+      opts.on('-r', '--runglish', 'Enter russian keywords in translit') do
         options[:runglish] = true
       end
 
       options[:best_hundred] = false
-      opts.on( '-b', '--best-hundred', 'Display Best 100 Menu' ) do
+      opts.on('-b', '--best-hundred', 'Display Best 100 Menu') do
         options[:best_hundred] = true
       end
 
-      options[:we_recommend] = false
-      opts.on( '-w', '--we-recommend', 'Display We recommend Menu' ) do
-        options[:we_recommend] = true
-      end
-
       options[:channels] = false
-      opts.on( '-c', '--channels', 'Display Channels Menu' ) do
+      opts.on('-c', '--channels', 'Display Channels Menu') do
         options[:channels] = true
       end
 
       options[:catalog] = false
-      opts.on( '-a', '--catalog', 'Display Catalog Menu' ) do
-        options[:popular] = true
+      opts.on('-a', '--catalog', 'Display Catalog Menu') do
+        options[:catalog] = true
       end
 
       options[:main] = false
-      opts.on( '-m', '--main', 'Display Main Menu' ) do
+      opts.on('-m', '--main', 'Display Main Menu') do
         options[:main] = true
-      end 
+      end
+
+      options[:new_items] = false
+      opts.on('-n', '--new_items', 'New Items Menu') do
+        options[:new_items] = true
+      end
+
+      options[:premiere] = false
+      opts.on('-p', '--premiere', 'Premiere of the Week Menu') do
+        options[:premiere] = true
+      end
 
       # This displays the help screen, all programs are
       # assumed to have this option.
-      opts.on( '-h', '--help', 'Display this screen' ) do
+      opts.on('-h', '--help', 'Display this screen') do
         puts opts
         exit
       end
     end
 
     optparse.parse!
+
+    if options[:runglish] && !options[:search]
+      puts "Please use -r option together with -s option."
+      exit
+    end
 
     options
   end

@@ -10,7 +10,9 @@ class SearchPage < Page
   def items
     list = []
 
-    document.css(".conteiner table#table-onecolumn tr").each do |item|
+    document.css(".conteiner #results #table-onecolumn tr").each_with_index do |item, index|
+      next if index == 0
+      
       showtime = item.css("td[1]").text.strip
       rating_image = item.css("td[2] img").at(0) ? item.css("td[2] img").at(0).attributes['src'].value.strip : ""
       rating = item.css("td[3]") ? item.css("td[3]").text.strip : ""
@@ -20,8 +22,12 @@ class SearchPage < Page
 
       href = link.attributes['href'].value
 
+      amount_expr = name.scan(%r{(.*)+\((\d*)+ (.*)+\)})[0]
+
+      folder = (not amount_expr.nil? and amount_expr.size > 1) ? true : false
+
       record = BrowseMediaItem.new(name, href)
-#        record.folder = folder
+      record.folder = folder
       record.showtime = showtime
       record.duration = duration
       #record.channel = channel
