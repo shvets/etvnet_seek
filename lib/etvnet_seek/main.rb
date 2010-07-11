@@ -2,12 +2,8 @@ require "highline/import"
 require 'optparse'
 require 'date'
 
-require 'etvnet_seek/core/page_factory'
-
-require 'etvnet_seek/cookie_helper'
-require 'etvnet_seek/user_selection'
-require 'etvnet_seek/link_info'
 require 'etvnet_seek/commander'
+require 'etvnet_seek/user_selection'
 require 'runglish'
 
 class Main
