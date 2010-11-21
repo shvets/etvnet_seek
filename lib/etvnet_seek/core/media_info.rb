@@ -1,5 +1,3 @@
-require 'json'
-
 class MediaInfo
   attr_reader :name, :link, :description, :description_production, :rtsp_link, :speech_lang,
               :file_length, :channel, :datetime, :popularity, :duration, :rating

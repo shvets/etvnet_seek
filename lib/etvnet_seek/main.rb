@@ -49,17 +49,20 @@ class Main
           current_item = items[user_selection.index]
           if mode == 'main'
             case current_item.link
-              when '/' then
-                process("main")
+#              when '/' then
+#                process("main")
+              when /tv_channels/ then
+                process('channels', current_item.link)
               when /aired_today/ then
                 process('media', current_item.link)
               when /catalog/ then
                 process('media', current_item.link)
-              when /tv_channels/ then
-                process('channels', current_item.link)
+              when /audio/ then
+                process('audio', current_item.link)
+              when /press/ then
+                #process('channels', current_item.link)
             end
           elsif mode == 'channels'
-            p user_selection.catalog?
             if user_selection.catalog?
               process('media', current_item.catalog_link)
             else
@@ -70,14 +73,30 @@ class Main
           elsif mode == 'premiere'
             process('access', current_item)
           elsif mode == 'catalog'
-             p 'catalog'
+            # p 'catalog'
             process('media', current_item.link)
-          else # media
+          elsif mode == 'media'
             if current_item.folder? or current_item.link =~ /(catalog|tv_channel)/
               process('media', current_item.link)
             else
               process("access", current_item)
             end
+          elsif mode == 'audio'
+            case current_item.media_file
+              when "" then
+                process('radio')
+              when "today_genres" then
+                process('today_genres')
+              when "newest" then
+                process('newest')
+              when "catalog" then
+                process('catalog')
+            end
+          elsif mode == 'radio'
+            media_info = MediaInfo.new current_item.link
+            LinkInfo.new(current_item, media_info)
+          else
+            ;
           end
         end
       end
@@ -90,30 +109,35 @@ class Main
     if cookie.nil?
       process("login", item)
     else
-      expires = CookieHelper.get_expires(cookie)
-      cookie_expire_date =  DateTime.strptime(expires, "%A, %d-%b-%Y %H:%M:%S %Z")
+      #expires = CookieHelper.get_expires(cookie)
+      #cookie_expire_date =  DateTime.strptime(expires, "%A, %d-%b-%Y %H:%M:%S %Z")
 
-      if cookie_expire_date < DateTime.now # cookie expired?
+#      if cookie_expire_date < DateTime.now # cookie expired?
+#        @cookie_helper.delete_cookie
+
+#        process("login", item)
+#      else
+      #media_info = page.request_media_info(item.media_file, cookie)
+
+      result = cookie.scan(/sessid=([\d|\w]*);.*_lc=([\d|\w]*);.*/)
+
+      short_cookie = "sessid=#{result[0][0]};_lc=#{result[0][1]}"
+      media_info = page.request_media_info(item.link.scan(/.*\/(\d*)\//)[0][0], short_cookie)
+
+      if media_info.session_expired?
         @cookie_helper.delete_cookie
 
         process("login", item)
       else
-        media_info = page.request_media_info(item.media_file, cookie)
-
-        if media_info.session_expired?
-          @cookie_helper.delete_cookie
-
-          process("login", item)
-        else
-          LinkInfo.new(item, media_info)
-        end
+        LinkInfo.new(item, media_info)
       end
+      #     end
     end
   end
 
   def get_credentials
-    username = ask("Enter username :  " )
-    password = ask("Enter password : " ) { |q| q.echo = '*' }
+    username = ask("Enter username :  ")
+    password = ask("Enter password : ") { |q| q.echo = '*' }
 
     [username, password]
   end
@@ -146,7 +170,7 @@ class Main
   def read_keywords input
     keywords = input
 
-    if(keywords.strip.size == 0)
+    if (keywords.strip.size == 0)
       while keywords.strip.size == 0
         keywords = ask("Keywords: ")
       end
@@ -161,7 +185,7 @@ class Main
 
   def read_user_selection items
     user_selection = UserSelection.new
-    
+
     while true
       user_selection.parse(ask("Select the number: "))
 

@@ -1,14 +1,24 @@
 source "http://rubygems.org"
 
-gem "gemcutter"
-gem "jeweler"
-gem "sinatra"
 gem "nokogiri"
 gem "libxml-ruby"
 gem "zipit"
-gem "highline"
 gem "json_pure"
-gem "rake"
 
-gem "rspec", :require => "spec"
-gem "mocha"
+group :development do
+  gem "jeweler"
+  gem "gemcutter"
+  gem "rake"
+  gem "highline"
+
+  gem 'ruby-debug-base19' if RUBY_VERSION.include? "1.9"
+  gem 'ruby-debug-base' if RUBY_VERSION.include? "1.8"
+  gem "ruby-debug-ide"  
+end
+
+group :test do
+  gem "mocha"
+  gem "rspec", "1.3.0", :require => "spec"
+  gem "rcov"
+end
+

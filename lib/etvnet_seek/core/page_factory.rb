@@ -14,6 +14,8 @@ require 'etvnet_seek/core/media_page'
 require 'etvnet_seek/core/search_page'
 require 'etvnet_seek/core/channels_page'
 require 'etvnet_seek/core/catalog_page'
+require 'etvnet_seek/core/audio_page'
+require 'etvnet_seek/core/radio_page'
 require 'etvnet_seek/core/new_items_page'
 require 'etvnet_seek/core/group_page'
 require 'etvnet_seek/core/access_page'
@@ -40,6 +42,10 @@ class PageFactory
         PremierePage.new    
       when 'media' then
         MediaPage.new url
+      when 'audio' then
+        AudioPage.new url
+      when 'radio' then
+        RadioPage.new
       when 'access' then
         AccessPage.new
       when 'login' then

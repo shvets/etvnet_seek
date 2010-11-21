@@ -2,19 +2,24 @@ $LOAD_PATH.unshift File.dirname(__FILE__) + '/lib'
 
 require 'rubygems' unless RUBY_VERSION =~ /1.9.*/
 
-require 'etvnet/url_seeker'
+require 'etvnet_seek/etvnet_seek'
+require 'etvnet_seek/main'
 require 'runglish'
 
-describe UrlSeeker do
+describe Main do
 
   before :each do
     @client = Main.new
   end
 
   it "should return search menu items" do
+    commander = @client.instance_variable_get(:@commander)
+    commander.instance_variable_set(:@options, {:search => true})
+    
     keywords = "красная шапочка"
 
     items = @client.seek(keywords)
+
     @client.display_items items
   end
 

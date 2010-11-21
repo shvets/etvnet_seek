@@ -10,6 +10,7 @@ class BrowseMediaItem < MediaItem
   end
 
   def to_s
+    buffer = ""
     if folder?
       buffer = "*** Folder *** "
     else

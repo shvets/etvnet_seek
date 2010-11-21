@@ -90,6 +90,15 @@ class Commander
         puts opts
         exit
       end
+
+      opts.on('-r', '--require', '') do
+      end
+
+      opts.on('-f', '--format', '') do
+      end
+
+      opts.on('-e', '--example', '') do
+      end
     end
 
     optparse.parse!
