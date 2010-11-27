@@ -10,7 +10,7 @@
 
 Usage: etvnet-seek [options] keywords
     -s, --search                     Display Search Menu
-    -r, --runglish                   Enter russian keywords in translit
+    -t, --translit                   Enter russian keywords in translit
     -b, --best-hunred                Display Best 100 Menu
     -n, --new_items                  Display New Items Menu
     -p, --premier                    Display Premier of the Week Menu

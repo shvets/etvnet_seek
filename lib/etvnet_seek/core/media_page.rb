@@ -1,4 +1,7 @@
+require 'etvnet_seek/core/items_page'
+
 class MediaPage < BasePage
+
   def items
     list = []
 
@@ -18,7 +21,7 @@ class MediaPage < BasePage
 
         folder = false
 
-        if additional_info.strip.size > 0
+        if not additional_info.nil? and additional_info.strip.size > 0
           if(additional_info.strip.scan(/\((\d*)(.*)\)/)).size > 0
             folder = true
           end

@@ -5,6 +5,7 @@ require 'date'
 require 'etvnet_seek/commander'
 require 'etvnet_seek/user_selection'
 require 'runglish'
+require 'etvnet_seek/core/items_page'
 
 class Main
   COOKIE_FILE_NAME = ENV['HOME'] + "/.etvnet-seek"
@@ -14,132 +15,175 @@ class Main
     @commander = Commander.new
   end
 
-  def seek *params
-    if @commander.search_mode?
-      params = read_keywords(*params)
+  def process *params
+    mode = @commander.get_initial_mode
 
-      puts "Keywords: #{params}" if @commander.runglish_mode?
+    case mode
+      when /(search|translit)/ then
+        keywords = read_keywords(*params)
+
+        puts "Keywords: #{keywords}" if @commander.translit_mode?
+
+        search keywords
+      when 'main' then
+        main
+      when 'channels' then
+        channels
+      when 'catalog' then
+        catalog
+      when 'best_hundred' then
+        best_hundred
+      when 'top_this_week' then
+        top_this_week
+      when 'premiere' then
+        premiere
+      when 'new_items' then
+        new_items
     end
-
-    process @commander.get_initial_mode, params
   end
 
-  def process mode, *params
-    page = PageFactory.create(mode, params)
+#    if mode == 'access'
+#      page = AccessPage.new
+#      page.process params[0], @cookie_helper
+#    elsif mode == 'login'
+#      page = LoginPage.new
+#      page.process params[0], @cookie_helper
+#    else
 
-    if mode == 'access'
-      process_access page, params[0]
-    elsif mode == 'login'
-      item = params[0]
-      cookie = page.login(*get_credentials)
+  def search keywords
+    process_items "search", keywords do |item, _|
+      access_or_media item, folder?(item)
+    end
+  end
 
-      @cookie_helper.save_cookie cookie
+  def main
+    process_items "main" do |item1, _|
+      case item1.link
+        when /tv_channels/ then
+          channels
+        when /(aired_today|catalog)/ then
+          media item1.link
+        when /audio/ then
+          audio item1.link, item1.media_file
+      end
+    end
+  end
 
-      process("access", item)
-    else
-      items = page.items
+  def channels
+    process_items "channels" do |item, user_selection|
+      link = user_selection.catalog? ? item.catalog_link : item.link
 
-      if items.size > 0
-        display_items items
-        display_bottom_menu_part(mode)
+      media link
+    end
+  end
 
-        user_selection = read_user_selection items
+  def catalog
+    process_items "catalog" do |item, _|
+      access_or_media item, folder?(item)
+    end
+  end
 
-        if not user_selection.quit?
-          current_item = items[user_selection.index]
-          if mode == 'main'
-            case current_item.link
-#              when '/' then
-#                process("main")
-              when /tv_channels/ then
-                process('channels', current_item.link)
-              when /aired_today/ then
-                process('media', current_item.link)
-              when /catalog/ then
-                process('media', current_item.link)
-              when /audio/ then
-                process('audio', current_item.link)
-              when /press/ then
-                #process('channels', current_item.link)
-            end
-          elsif mode == 'channels'
-            if user_selection.catalog?
-              process('media', current_item.catalog_link)
-            else
-              process('media', current_item.link)
-            end
-          elsif mode == 'new_items'
-            process('access', current_item)
-          elsif mode == 'premiere'
-            process('access', current_item)
-          elsif mode == 'catalog'
-            # p 'catalog'
-            process('media', current_item.link)
-          elsif mode == 'media'
-            if current_item.folder? or current_item.link =~ /(catalog|tv_channel)/
-              process('media', current_item.link)
-            else
-              process("access", current_item)
-            end
-          elsif mode == 'audio'
-            case current_item.media_file
-              when "" then
-                process('radio')
-              when "today_genres" then
-                process('today_genres')
-              when "newest" then
-                process('newest')
-              when "catalog" then
-                process('catalog')
-            end
-          elsif mode == 'radio'
-            media_info = MediaInfo.new current_item.link
-            LinkInfo.new(current_item, media_info)
-          else
-            ;
-          end
+  def best_hundred
+    process_items "best_hundred" do |item, _|
+      group item, item.link =~ /best100/
+    end
+  end
+
+  def top_this_week
+    process_items "top_this_week" do |item, _|
+      group item, item.link =~ /top_this_week/
+    end
+  end
+
+  def group item1, next_group
+    if next_group
+      process_items "media", item1.link do |item2, _|
+        result = nil
+        # try to treat item as a folder
+        process_items "media", item2.link do |item3, _|
+          result = access item3
         end
+
+        # otherwise try to treat item as a file
+        result = access item2 if result.nil?
+
+        result
       end
-    end
-  end
-
-  def process_access page, item
-    cookie = @cookie_helper.load_cookie
-
-    if cookie.nil?
-      process("login", item)
     else
-      #expires = CookieHelper.get_expires(cookie)
-      #cookie_expire_date =  DateTime.strptime(expires, "%A, %d-%b-%Y %H:%M:%S %Z")
-
-#      if cookie_expire_date < DateTime.now # cookie expired?
-#        @cookie_helper.delete_cookie
-
-#        process("login", item)
-#      else
-      #media_info = page.request_media_info(item.media_file, cookie)
-
-      result = cookie.scan(/sessid=([\d|\w]*);.*_lc=([\d|\w]*);.*/)
-
-      short_cookie = "sessid=#{result[0][0]};_lc=#{result[0][1]}"
-      media_info = page.request_media_info(item.link.scan(/.*\/(\d*)\//)[0][0], short_cookie)
-
-      if media_info.session_expired?
-        @cookie_helper.delete_cookie
-
-        process("login", item)
-      else
-        LinkInfo.new(item, media_info)
+      process_items "media", item1.link do |item2, _|
+        access_or_media item2, folder?(item2)
       end
-      #     end
     end
   end
 
-  def get_credentials
-    username = ask("Enter username :  ")
-    password = ask("Enter password : ") { |q| q.echo = '*' }
+  def folder? item
+    item.link =~ /(catalog|tv_channel)/ || item.folder?
+  end
 
-    [username, password]
+  def premiere
+    process_items "premiere" do |item, _|
+      access_or_media item, folder?(item)
+    end
+  end
+
+  def new_items
+    process_items "new_items" do |item, _|
+      access_or_media item, folder?(item)
+    end
+  end
+
+  def media root
+    process_items "media", root do |item, _|
+      access_or_media item, folder?(item)
+    end
+  end
+
+  def access_or_media item, folder
+    if folder
+      media item.link
+    else
+      access item
+    end
+  end
+
+  def access item
+    page = AccessPage.new @cookie_helper
+    page.process item
+  end
+
+  def audio root
+    process_items "audio", root do |item1, _|
+      process_items "radio", item1.link do |item2, _|
+        media_info = MediaInfo.new item2.link
+        LinkInfo.new(item2, media_info)
+      end
+    end
+  end
+
+#      case type
+#        when "radio" then
+#        when "today_genres" then
+#        when "newest" then
+#        when "catalog" then
+#      end
+
+  def process_items mode, url = nil
+    page = ItemsPage.new mode, url
+
+    items = page.items
+
+    if items.size > 0
+      display_items items
+      display_bottom_menu_part(mode)
+
+      user_selection = read_user_selection items
+
+      if not user_selection.quit?
+        current_item = items[user_selection.index]
+
+        yield(current_item, user_selection) if block_given?
+      end
+    end
   end
 
   def display_items items
@@ -176,7 +220,7 @@ class Main
       end
     end
 
-    if RUBY_PLATFORM =~ /mswin32/ or @commander.runglish_mode?
+    if RUBY_PLATFORM =~ /mswin32/ or @commander.translit_mode?
       keywords = Runglish::LatToRusConverter.new.transliterate(keywords)
     end
 

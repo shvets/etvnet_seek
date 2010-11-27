@@ -8,19 +8,30 @@ class CatalogPage < MediaPage
   def items
     list = []
 
-    document.css("#table-onecolumn tr").each do |item|
-      links = item.css("td a")
+    document.css(".conteiner #results #table-onecolumn tr").each_with_index do |item, index|
+      next if index == 0
 
-      href = links[0]
-      catalog_href = links[1]
+      showtime = item.css("td[1]").text.strip
+      rating_image = item.css("td[3] img").at(0) ? item.css("td[3] img").at(0).attributes['src'].value.strip : ""
+      rating = item.css("td[4]") ? item.css("td[4]").text.strip : ""
+      name = item.css("td[2]").text.strip
+      duration = item.css("td[5]") ? item.css("td[5]").text.strip : ""
+      link = item.css("td[2] a").at(0)
 
-      link = href.attributes['href'].value
-      text = href.attributes['title'].value
-      catalog_link = catalog_href.attributes['href'].value
+      href = link.attributes['href'].value
+      digit_scan = name.scan(/\((\d*).*\)/)[0]
+      amount_expr = digit_scan.nil? ? 0 : digit_scan[0].to_i
+      folder = (amount_expr > 1) ? true : false
 
-      item = CatalogItem.new(text, link, catalog_link)
+      record = BrowseMediaItem.new(name, href)
+      record.folder = folder
+      record.showtime = showtime
+      record.duration = duration
+      #record.channel = channel
+      record.rating_image = rating_image
+      record.rating = rating
 
-      list << item
+      list << record
     end
 
     list

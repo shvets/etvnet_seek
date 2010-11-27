@@ -46,4 +46,22 @@ class LoginPage < ServiceCall
 #    new_cookie
 #  end
 
+
+  def process item, cookie_helper
+    cookie = login(*get_credentials)
+
+    cookie_helper.save_cookie cookie
+
+#    process("access", item)
+
+    page = AccessPage.new
+    page.process item, cookie_helper
+  end
+
+  def get_credentials
+    username = ask("Enter username :  ")
+    password = ask("Enter password : ") { |q| q.echo = '*' }
+
+    [username, password]
+  end
 end

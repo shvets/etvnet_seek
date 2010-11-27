@@ -9,22 +9,24 @@ class Commander
     @options[:search]
   end
 
-  def runglish_mode?
-    @options[:runglish]
+  def translit_mode?
+    @options[:translit]
   end
 
   def get_initial_mode
-    if @options[:search] == true
+    if @options[:search] or @options[:translit]
       'search'
-    elsif @options[:best_hundred] == true
+    elsif @options[:best_hundred]
       'best_hundred'
-    elsif @options[:channels] == true
+    elsif @options[:top_this_week]
+      'top_this_week'
+    elsif @options[:channels]
       'channels'
-    elsif @options[:catalog] == true
+    elsif @options[:catalog]
       'catalog'
-    elsif @options[:new_items] == true
+    elsif @options[:new_items]
       'new_items'
-    elsif @options[:premiere] == true
+    elsif @options[:premiere]
       'premiere'
     else
       'main'
@@ -45,32 +47,37 @@ class Commander
       opts.banner = "Usage: etvnet-seek [options] keywords"
 
       options[:search] = false
-      opts.on('-s', '--search', 'Display Search Menu') do
+      opts.on('-s', '--search', 'Search programs') do
         options[:search] = true
       end
 
-      options[:runglish] = false
-      opts.on('-r', '--runglish', 'Enter russian keywords in translit') do
-        options[:runglish] = true
+      options[:translit] = false
+      opts.on('-t', '--translit', 'Search programs in translit') do
+        options[:translit] = true
       end
 
       options[:best_hundred] = false
-      opts.on('-b', '--best-hundred', 'Display Best 100 Menu') do
+      opts.on('-b', '--best-hundred', 'Best 100 Menu') do
         options[:best_hundred] = true
       end
 
+      options[:top_this_week] = false
+      opts.on('-w', '--top_this_week', 'Top This Week') do
+        options[:top_this_week] = true
+      end
+
       options[:channels] = false
-      opts.on('-c', '--channels', 'Display Channels Menu') do
+      opts.on('-c', '--channels', 'Channels Menu') do
         options[:channels] = true
       end
 
       options[:catalog] = false
-      opts.on('-a', '--catalog', 'Display Catalog Menu') do
+      opts.on('-a', '--catalog', 'Catalog Menu') do
         options[:catalog] = true
       end
 
       options[:main] = false
-      opts.on('-m', '--main', 'Display Main Menu') do
+      opts.on('-m', '--main', 'Main Menu') do
         options[:main] = true
       end
 
@@ -91,22 +98,22 @@ class Commander
         exit
       end
 
-      opts.on('-r', '--require', '') do
-      end
-
-      opts.on('-f', '--format', '') do
-      end
-
-      opts.on('-e', '--example', '') do
-      end
+#      opts.on('-r', '--require', '') do
+#      end
+#
+#      opts.on('-f', '--format', '') do
+#      end
+#
+#      opts.on('-e', '--example', '') do
+#      end
     end
 
     optparse.parse!
 
-    if options[:runglish] && !options[:search]
-      puts "Please use -r option together with -s option."
-      exit
-    end
+#    if options[:runglish] && !options[:search]
+#      puts "Please use -r option together with -s option."
+#      exit
+#    end
 
     options
   end

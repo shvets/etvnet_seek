@@ -5,6 +5,10 @@ class ChannelsPage < MediaPage
     super(url)
   end
 
+  def catalog?
+    @catalog
+  end
+
   def items
     list = []
 
@@ -25,5 +29,17 @@ class ChannelsPage < MediaPage
 
     list
   end
+
+#  def process item, catalog
+#    if catalog
+#      page = MediaPage.new
+#      page.process item.catalog_link
+#      #process('media', item.catalog_link)
+#    else
+#      page = MediaPage.new
+#      page.process item.link
+##      process('media', tem.link)
+#    end
+#  end
 
 end

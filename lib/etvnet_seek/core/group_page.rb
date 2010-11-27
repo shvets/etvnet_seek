@@ -1,10 +1,12 @@
 class GroupPage < BasePage
   protected
 
-  def get_typical_items tag_name
+  def get_typical_items tag_name, parent=nil
     list = []
 
-    document.css(tag_name).each do |item|
+    root = parent.nil? ? document : parent
+
+    root.css(tag_name).each do |item|
       href = item.css("a").at(0)
       
       unless href.nil?
@@ -19,24 +21,4 @@ class GroupPage < BasePage
   end
 end
 
-class BestHundredPage < GroupPage
-  def items
-    list = get_typical_items("ul.best-list li")
-
-    node = document.css("ul.best-list").at(0).next
-
-    unless node.nil?
-      link = node.attributes['href'].value
-      text = node.children.at(0).content
-
-      list << GroupMediaItem.new(text, link)
-    end
-  end
-end
-
-class PremierePage < GroupPage
-  def items
-    get_typical_items("ul.recomendation-list li")
-  end
-end
 

@@ -1,7 +1,7 @@
 require 'rubygems' unless RUBY_VERSION =~ /1.9.*/
 
 require 'rake'
-require 'spec/rake/spectask'
+require 'rspec/core/rake_task'
 
 begin
   require 'zipit'
@@ -47,10 +47,10 @@ task :"run:gem" do
 end
 
 # configure rspec
-Spec::Rake::SpecTask.new do |spec|
- spec.spec_files = FileList["spec/**/*_spec.rb"]
- spec.spec_opts << "--color"
- spec.libs += ["lib", "spec"]
+RSpec::Core::RakeTask.new do |task|
+ task.spec_files = FileList["spec/**/*_spec.rb"]
+ task.spec_opts << "--color"
+ task.libs += ["lib", "spec"]
 end
 
 task :default => :zip
