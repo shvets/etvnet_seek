@@ -1,4 +1,4 @@
-class CatalogPage < MediaPage
+class CatalogPage < ItemsPage
   CATALOG_URL = BASE_URL + "/catalog/"
 
   def initialize url = CATALOG_URL

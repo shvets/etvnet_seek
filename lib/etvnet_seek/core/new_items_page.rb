@@ -1,4 +1,7 @@
-class NewItemsPage < BasePage
+require 'etvnet_seek/core/items_page'
+require 'etvnet_seek/core/browse_media_item'
+
+class NewItemsPage < ItemsPage
 
   def items
     list = []

@@ -1,5 +1,7 @@
 require 'nokogiri'
 
+require 'etvnet_seek/core/service_call'
+
 class Page < ServiceCall
   BASE_URL = "http://www.etvnet.com"
 

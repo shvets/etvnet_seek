@@ -1,3 +1,6 @@
+require 'etvnet_seek/core/group_page'
+require 'etvnet_seek/core/media_item'
+
 class BestHundredPage < GroupPage
   def items
     parent = document.css(".conteiner .best").at(0).parent

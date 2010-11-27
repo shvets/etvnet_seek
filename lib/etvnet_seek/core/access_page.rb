@@ -1,5 +1,9 @@
 require 'json'
 
+require 'etvnet_seek/core/media_info'
+require 'etvnet_seek/core/service_call'
+require 'etvnet_seek/core/login_page'
+
 class AccessPage < ServiceCall
   ACCESS_URL = Page::BASE_URL + "/watch/"
 

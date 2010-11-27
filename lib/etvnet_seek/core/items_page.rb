@@ -1,39 +1,49 @@
-class ItemsPage < BasePage
-  def initialize mode, url = nil
-    @mode = mode
-    @url = url
+require 'etvnet_seek/core/page'
+require 'etvnet_seek/core/media_item'
+
+class ItemsPage < Page
+  def items
+    []
   end
 
-  def items
-    case @mode
-      when 'main' then
-        page = HomePage.new
+  def title
+    document.css("title").text
+  end
 
-      when 'channels' then
-        page = ChannelsPage.new
-      when 'catalog' then
-        page = CatalogPage.new
-      when 'media' then
-        page = MediaPage.new @url
-      when 'search' then
-        page = SearchPage.new @url
-      when 'best_hundred' then
-        page = BestHundredPage.new
-      when 'top_this_week' then
-        page = TopThisWeekPage.new
-      when 'premiere' then
-        page = PremierePage.new
-      when 'new_items' then
-        page = NewItemsPage.new
-      when 'audio' then
-        page = AudioPage.new
-      when 'radio' then
-        page = RadioPage.new
-      else
-        page = nil
+  def page_title
+    document.css(".conteiner h1").text
+  end
+
+  protected
+
+  def collect_links path
+    list = []
+
+    document.css("#{path} a").each do |item|
+      href = item.attributes['href'].value
+      text = item.text
+
+      list << MediaItem.new(text, href)
     end
 
-    page.nil? ? [] : page.items
+    list
   end
 
+  def collect_images path
+    list = []
+
+    document.css("#{path} img").each do |item|
+      list << item.attributes['src'].value.strip
+    end
+
+    list
+  end
+
+  def additional_info node, index
+    children = node.parent.children
+    if children.size > 0
+      element = children.at(index)
+      element.text if element
+    end
+  end  
 end

@@ -8,7 +8,6 @@ $:.unshift(File::join(File::dirname(File::dirname(__FILE__)), "lib"))
 $KCODE='u'
 
 require 'etvnet_seek/etvnet_seek'
-require 'etvnet_seek/main'
 
 trap('INT') { puts "Program was interrupted..."; exit }
 

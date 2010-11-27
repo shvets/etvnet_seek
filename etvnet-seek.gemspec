@@ -29,7 +29,6 @@ Gem::Specification.new do |s|
      "lib/etvnet_seek/commander.rb",
      "lib/etvnet_seek/cookie_helper.rb",
      "lib/etvnet_seek/core/access_page.rb",
-     "lib/etvnet_seek/core/base_page.rb",
      "lib/etvnet_seek/core/browse_media_item.rb",
      "lib/etvnet_seek/core/catalog_item.rb",
      "lib/etvnet_seek/core/catalog_page.rb",

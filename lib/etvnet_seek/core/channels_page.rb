@@ -1,12 +1,11 @@
-class ChannelsPage < MediaPage
+require 'etvnet_seek/core/items_page'
+require 'etvnet_seek/core/channel_media_item'
+
+class ChannelsPage < ItemsPage
   CHANNELS_URL = BASE_URL + "/tv_channels/"
 
   def initialize url = CHANNELS_URL
     super(url)
-  end
-
-  def catalog?
-    @catalog
   end
 
   def items
@@ -29,17 +28,5 @@ class ChannelsPage < MediaPage
 
     list
   end
-
-#  def process item, catalog
-#    if catalog
-#      page = MediaPage.new
-#      page.process item.catalog_link
-#      #process('media', item.catalog_link)
-#    else
-#      page = MediaPage.new
-#      page.process item.link
-##      process('media', tem.link)
-#    end
-#  end
 
 end

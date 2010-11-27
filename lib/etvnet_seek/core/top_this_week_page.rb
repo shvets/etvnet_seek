@@ -1,3 +1,6 @@
+require 'etvnet_seek/core/group_page'
+require 'etvnet_seek/core/group_media_item'
+
 class TopThisWeekPage < GroupPage
   def items
     parent = document.css(".conteiner .coming-soon").at(0).parent

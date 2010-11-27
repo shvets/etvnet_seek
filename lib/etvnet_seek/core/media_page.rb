@@ -1,6 +1,7 @@
 require 'etvnet_seek/core/items_page'
+require 'etvnet_seek/core/browse_media_item'
 
-class MediaPage < BasePage
+class MediaPage < ItemsPage
 
   def items
     list = []

@@ -1,4 +1,8 @@
-class GroupPage < BasePage
+require 'etvnet_seek/core/items_page'
+require 'etvnet_seek/core/group_media_item'
+
+class GroupPage < ItemsPage
+
   protected
 
   def get_typical_items tag_name, parent=nil

@@ -1,3 +1,5 @@
+require 'etvnet_seek/core/media_item'
+
 class NewItem < MediaItem
 
   attr_accessor :image

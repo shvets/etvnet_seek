@@ -1,5 +1,7 @@
 require 'stringio'
 
+require 'etvnet_seek/core/service_call'
+
 class LoginPage < ServiceCall
   LOGIN_URL = "#{Page::BASE_URL}/login/"
 

@@ -5,7 +5,13 @@ require 'date'
 require 'etvnet_seek/commander'
 require 'etvnet_seek/user_selection'
 require 'runglish'
+
+require 'etvnet_seek/cookie_helper'
+require 'etvnet_seek/link_info'
+require 'etvnet_seek/core/items_page_factory'
 require 'etvnet_seek/core/items_page'
+require 'etvnet_seek/core/access_page'
+require 'etvnet_seek/core/login_page'
 
 class Main
   COOKIE_FILE_NAME = ENV['HOME'] + "/.etvnet-seek"
@@ -21,7 +27,6 @@ class Main
     case mode
       when /(search|translit)/ then
         keywords = read_keywords(*params)
-
         puts "Keywords: #{keywords}" if @commander.translit_mode?
 
         search keywords
@@ -64,7 +69,7 @@ class Main
         when /(aired_today|catalog)/ then
           media item1.link
         when /audio/ then
-          audio item1.link, item1.media_file
+          audio item1.link
       end
     end
   end
@@ -167,8 +172,8 @@ class Main
 #        when "catalog" then
 #      end
 
-  def process_items mode, url = nil
-    page = ItemsPage.new mode, url
+  def process_items mode, *params
+    page = ItemsPageFactory.create mode, *params
 
     items = page.items
 
