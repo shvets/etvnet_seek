@@ -18,20 +18,21 @@ class CatalogPage < ItemsPage
       duration = item.css("td[5]") ? item.css("td[5]").text.strip : ""
       link = item.css("td[2] a").at(0)
 
-      href = link.attributes['href'].value
-      digit_scan = name.scan(/\((\d*).*\)/)[0]
-      amount_expr = digit_scan.nil? ? 0 : digit_scan[0].to_i
-      folder = (amount_expr > 1) ? true : false
+      unless link.nil?
+        href = link.attributes['href'].value
+        digit_scan = name.scan(/\((\d*).*\)/)[0]
+        amount_expr = digit_scan.nil? ? 0 : digit_scan[0].to_i
+        folder = (amount_expr > 1) ? true : false
 
-      record = BrowseMediaItem.new(name, href)
-      record.folder = folder
-      record.showtime = showtime
-      record.duration = duration
-      #record.channel = channel
-      record.rating_image = rating_image
-      record.rating = rating
+        record = BrowseMediaItem.new(name, href)
+        record.folder = folder
+        record.showtime = showtime
+        record.duration = duration
+        record.rating_image = rating_image
+        record.rating = rating
 
-      list << record
+        list << record
+      end
     end
 
     list

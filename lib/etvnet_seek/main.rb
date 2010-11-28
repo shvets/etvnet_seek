@@ -19,6 +19,9 @@ class Main
   def initialize
     @cookie_helper = CookieHelper.new COOKIE_FILE_NAME
     @commander = Commander.new
+
+    @access_page = AccessPage.new
+    @login_page = LoginPage.new
   end
 
   def process *params
@@ -29,35 +32,21 @@ class Main
         keywords = read_keywords(*params)
         puts "Keywords: #{keywords}" if @commander.translit_mode?
 
-        search keywords
+        process_folder "search", keywords
       when 'main' then
         main
       when 'channels' then
         channels
       when 'catalog' then
-        catalog
+        process_folder "catalog"
       when 'best_hundred' then
         best_hundred
       when 'top_this_week' then
         top_this_week
       when 'premiere' then
-        premiere
+        process_folder "premiere"
       when 'new_items' then
-        new_items
-    end
-  end
-
-#    if mode == 'access'
-#      page = AccessPage.new
-#      page.process params[0], @cookie_helper
-#    elsif mode == 'login'
-#      page = LoginPage.new
-#      page.process params[0], @cookie_helper
-#    else
-
-  def search keywords
-    process_items "search", keywords do |item, _|
-      access_or_media item, folder?(item)
+        process_folder "new_items"
     end
   end
 
@@ -67,7 +56,7 @@ class Main
         when /tv_channels/ then
           channels
         when /(aired_today|catalog)/ then
-          media item1.link
+          process_folder "media", item1.link
         when /audio/ then
           audio item1.link
       end
@@ -78,29 +67,23 @@ class Main
     process_items "channels" do |item, user_selection|
       link = user_selection.catalog? ? item.catalog_link : item.link
 
-      media link
-    end
-  end
-
-  def catalog
-    process_items "catalog" do |item, _|
-      access_or_media item, folder?(item)
+      process_folder "media", link
     end
   end
 
   def best_hundred
     process_items "best_hundred" do |item, _|
-      group item, item.link =~ /best100/
+      process_group item, item.link =~ /best100/
     end
   end
 
   def top_this_week
     process_items "top_this_week" do |item, _|
-      group item, item.link =~ /top_this_week/
+      process_group item, item.link =~ /top_this_week/
     end
   end
 
-  def group item1, next_group
+  def process_group item1, next_group
     if next_group
       process_items "media", item1.link do |item2, _|
         result = nil
@@ -115,9 +98,7 @@ class Main
         result
       end
     else
-      process_items "media", item1.link do |item2, _|
-        access_or_media item2, folder?(item2)
-      end
+      process_folder "media", item1.link
     end
   end
 
@@ -125,23 +106,20 @@ class Main
     item.link =~ /(catalog|tv_channel)/ || item.folder?
   end
 
-  def premiere
-    process_items "premiere" do |item, _|
+  def process_folder name, *params
+    process_items name, *params do |item, _|
       access_or_media item, folder?(item)
     end
   end
 
-  def new_items
-    process_items "new_items" do |item, _|
-      access_or_media item, folder?(item)
+   def audio root
+    process_items "audio", root do |item1, _|
+      process_items "radio", item1.link do |item2, _|
+        media_info = MediaInfo.new item2.link
+        LinkInfo.new(item2, media_info)
+      end
     end
-  end
-
-  def media root
-    process_items "media", root do |item, _|
-      access_or_media item, folder?(item)
-    end
-  end
+   end
 
   def access_or_media item, folder
     if folder
@@ -152,25 +130,42 @@ class Main
   end
 
   def access item
-    page = AccessPage.new @cookie_helper
-    page.process item
-  end
+    cookie = @cookie_helper.load_cookie
 
-  def audio root
-    process_items "audio", root do |item1, _|
-      process_items "radio", item1.link do |item2, _|
-        media_info = MediaInfo.new item2.link
-        LinkInfo.new(item2, media_info)
+    if cookie.nil?
+      login
+
+      access item
+    else
+      result = cookie.scan(/sessid=([\d|\w]*);.*_lc=([\d|\w]*);.*/)
+
+      short_cookie = "sessid=#{result[0][0]};_lc=#{result[0][1]}"
+      media_info = @access_page.request_media_info(item.link.scan(/.*\/(\d*)\//)[0][0], short_cookie)
+
+      if media_info.session_expired?
+        @cookie_helper.delete_cookie
+
+        login
+
+        access item
+      else
+        LinkInfo.new(item, media_info)
       end
     end
   end
 
-#      case type
-#        when "radio" then
-#        when "today_genres" then
-#        when "newest" then
-#        when "catalog" then
-#      end
+  def login
+    cookie = @login_page.login(*get_credentials)
+
+    cookie_helper.save_cookie cookie
+  end
+
+  def get_credentials
+    username = ask("Enter username :  ")
+    password = ask("Enter password : ") { |q| q.echo = '*' }
+
+    [username, password]
+  end
 
   def process_items mode, *params
     page = ItemsPageFactory.create mode, *params
