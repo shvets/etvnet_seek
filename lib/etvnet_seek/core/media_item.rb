@@ -18,8 +18,16 @@ class MediaItem
     false
   end
 
-  def has_media_links?
-    Nokogiri::HTML(open(Page::BASE_URL + link)).css("b a.media_file").size > 0
+#  def has_media_links?
+#    page = Page.new link
+#
+#    page.document.css("b a.media_file").size > 0
+#  end
+
+  def access_page?
+    page = Page.new link
+
+    page.document.css(".start-video start-movie").size > 0
   end
 
   def ==(object)

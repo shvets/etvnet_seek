@@ -5,11 +5,11 @@
 
 Gem::Specification.new do |s|
   s.name = %q{etvnet-seek}
-  s.version = "0.7.2"
+  s.version = "0.8.0"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Alexander Shvets"]
-  s.date = %q{2010-07-11}
+  s.date = %q{2010-11-28}
   s.default_executable = %q{etvnet-seek}
   s.description = %q{Command line tool for getting mms urls from etvnet service.}
   s.email = %q{alexander.shvets@gmail.com}
@@ -29,6 +29,8 @@ Gem::Specification.new do |s|
      "lib/etvnet_seek/commander.rb",
      "lib/etvnet_seek/cookie_helper.rb",
      "lib/etvnet_seek/core/access_page.rb",
+     "lib/etvnet_seek/core/audio_page.rb",
+     "lib/etvnet_seek/core/best_hundred_page.rb",
      "lib/etvnet_seek/core/browse_media_item.rb",
      "lib/etvnet_seek/core/catalog_item.rb",
      "lib/etvnet_seek/core/catalog_page.rb",
@@ -37,6 +39,8 @@ Gem::Specification.new do |s|
      "lib/etvnet_seek/core/group_media_item.rb",
      "lib/etvnet_seek/core/group_page.rb",
      "lib/etvnet_seek/core/home_page.rb",
+     "lib/etvnet_seek/core/items_page.rb",
+     "lib/etvnet_seek/core/items_page_factory.rb",
      "lib/etvnet_seek/core/login_page.rb",
      "lib/etvnet_seek/core/media_info.rb",
      "lib/etvnet_seek/core/media_item.rb",
@@ -44,9 +48,11 @@ Gem::Specification.new do |s|
      "lib/etvnet_seek/core/new_item.rb",
      "lib/etvnet_seek/core/new_items_page.rb",
      "lib/etvnet_seek/core/page.rb",
-     "lib/etvnet_seek/core/page_factory.rb",
+     "lib/etvnet_seek/core/premiere_page.rb",
+     "lib/etvnet_seek/core/radio_page.rb",
      "lib/etvnet_seek/core/search_page.rb",
      "lib/etvnet_seek/core/service_call.rb",
+     "lib/etvnet_seek/core/top_this_week_page.rb",
      "lib/etvnet_seek/easy_auth.rb",
      "lib/etvnet_seek/etvnet_seek.rb",
      "lib/etvnet_seek/link_info.rb",

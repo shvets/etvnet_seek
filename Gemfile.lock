@@ -40,7 +40,7 @@ DEPENDENCIES
   nokogiri
   rake
   rcov
-  rspec (= 1.3.0)
+  rspec
   ruby-debug-base
   ruby-debug-ide
   zipit

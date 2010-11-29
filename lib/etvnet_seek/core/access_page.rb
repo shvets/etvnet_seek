@@ -1,5 +1,6 @@
 require 'json'
 
+require 'etvnet_seek/core/page'
 require 'etvnet_seek/core/media_info'
 require 'etvnet_seek/core/service_call'
 

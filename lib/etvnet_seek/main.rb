@@ -4,24 +4,19 @@ require 'date'
 
 require 'etvnet_seek/commander'
 require 'etvnet_seek/user_selection'
+require 'etvnet_seek/accessor'
 require 'runglish'
 
-require 'etvnet_seek/cookie_helper'
 require 'etvnet_seek/link_info'
 require 'etvnet_seek/core/items_page_factory'
 require 'etvnet_seek/core/items_page'
-require 'etvnet_seek/core/access_page'
-require 'etvnet_seek/core/login_page'
 
 class Main
   COOKIE_FILE_NAME = ENV['HOME'] + "/.etvnet-seek"
 
   def initialize
-    @cookie_helper = CookieHelper.new COOKIE_FILE_NAME
     @commander = Commander.new
-
-    @access_page = AccessPage.new
-    @login_page = LoginPage.new
+    @accessor = Accessor.new COOKIE_FILE_NAME, lambda { get_credentials }
   end
 
   def process *params
@@ -86,19 +81,14 @@ class Main
   def process_group item1, next_group
     if next_group
       process_items "media", item1.link do |item2, _|
-        result = nil
-        # try to treat item as a folder
-        process_items "media", item2.link do |item3, _|
-          result = access item3
+        if folder? item2 or not item2.access_page?
+          process_folder "media", item2.link
+        else
+          @accessor.access item2
         end
-
-        # otherwise try to treat item as a file
-        result = access item2 if result.nil?
-
-        result
       end
     else
-      process_folder "media", item1.link
+      access_or_media item1, folder?(item1)
     end
   end
 
@@ -112,52 +102,21 @@ class Main
     end
   end
 
-   def audio root
+  def audio root
     process_items "audio", root do |item1, _|
       process_items "radio", item1.link do |item2, _|
         media_info = MediaInfo.new item2.link
         LinkInfo.new(item2, media_info)
       end
     end
-   end
+  end
 
   def access_or_media item, folder
     if folder
-      media item.link
+      process_folder "media", item.link
     else
-      access item
+      @accessor.access item
     end
-  end
-
-  def access item
-    cookie = @cookie_helper.load_cookie
-
-    if cookie.nil?
-      login
-
-      access item
-    else
-      result = cookie.scan(/sessid=([\d|\w]*);.*_lc=([\d|\w]*);.*/)
-
-      short_cookie = "sessid=#{result[0][0]};_lc=#{result[0][1]}"
-      media_info = @access_page.request_media_info(item.link.scan(/.*\/(\d*)\//)[0][0], short_cookie)
-
-      if media_info.session_expired?
-        @cookie_helper.delete_cookie
-
-        login
-
-        access item
-      else
-        LinkInfo.new(item, media_info)
-      end
-    end
-  end
-
-  def login
-    cookie = @login_page.login(*get_credentials)
-
-    cookie_helper.save_cookie cookie
   end
 
   def get_credentials

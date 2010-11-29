@@ -40,6 +40,28 @@ task :zip do
   zip :archive => "etvnet-seek.zip", :dir => "."
 end
 
+desc "Release the gem"
+task :"release:gem" do
+  %x(
+      rake gemspec
+      rake build
+      rake install
+      git add .
+  )
+  puts "Commit message:"
+  message = STDIN.gets
+
+  version = "#{File.open(File::dirname(__FILE__) + "/VERSION").readlines().first}"
+
+  %x(
+    git commit -m "#{message}"
+
+    git push origin master
+
+    gem push pkg/google-translate-#{version}.gem
+  )
+end
+
 desc "Run gem code locally"
 task :"run:gem" do
   command = "bin/etvnet-seek"
@@ -48,9 +70,8 @@ end
 
 # configure rspec
 RSpec::Core::RakeTask.new do |task|
- task.spec_files = FileList["spec/**/*_spec.rb"]
- task.spec_opts << "--color"
- task.libs += ["lib", "spec"]
+  task.pattern = 'spec/**/*_spec.rb'
+  task.verbose = false
 end
 
 task :default => :zip
