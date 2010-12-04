@@ -11,7 +11,7 @@ class ServiceCall
     open(url, "User-Agent" => "Ruby/#{RUBY_VERSION}")
   end
 
-  def post params, headers
+  def post params, headers, url = @url
     request = Net::HTTP::Post.new(url, headers.merge({"User-Agent" => "Ruby/#{RUBY_VERSION}"}))
     request.set_form_data(params)
     #request.basic_auth(un, pw)

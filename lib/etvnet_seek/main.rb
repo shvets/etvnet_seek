@@ -46,14 +46,14 @@ class Main
   end
 
   def main
-    process_items "main" do |item1, _|
-      case item1.link
+    process_items "main" do |item, _|
+      case item.link
         when /tv_channels/ then
           channels
         when /(aired_today|catalog)/ then
-          process_folder "media", item1.link
+          process_folder "media", item.link
         when /audio/ then
-          audio item1.link
+          audio item.link
       end
     end
   end
@@ -78,17 +78,13 @@ class Main
     end
   end
 
-  def process_group item1, next_group
+  def process_group item, next_group
     if next_group
-      process_items "media", item1.link do |item2, _|
-        if folder? item2 or not item2.access_page?
-          process_folder "media", item2.link
-        else
-          @accessor.access item2
-        end
+      process_items "media", item.link do |media_item, _|
+        access_or_media item, (folder?(media_item) or not media_item.access_page?)
       end
     else
-      access_or_media item1, folder?(item1)
+      access_or_media item, (folder?(item) or not item.access_page?)
     end
   end
 

@@ -14,16 +14,23 @@ class AccessPage < ServiceCall
   def request_media_info media_file, cookie
     params = { 'bitrate' => '2', 'view' => 'submit'}
 
+    if true
+      params['high_quality'] = ""
+    end
+
     headers = { 'Cookie' => cookie, 'X-Requested-With' =>	'XMLHttpRequest' }
 
-    @url += "#{media_file}/"
-    
-    response = post(params, headers)
+    response = post(params, headers, url + "#{media_file}/")
 
     # MediaInfo.new Nokogiri::HTML(response.body).css("ref").at(0).attributes["href"].text
 
     json = JSON.parse(response.body)
-    MediaInfo.new json["url"]
+
+    if response.kind_of? Net::HTTPOK
+      MediaInfo.new json["url"]
+    else
+      raise "Problem getting url: #{response.class.name}: #{json['msg']} "
+    end
   end
 
 end

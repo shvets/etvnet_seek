@@ -13,7 +13,13 @@ trap('INT') { puts "Program was interrupted..."; exit }
 
 client = Main.new
 
-link_info = client.process ARGV.join(' ')
+link_info = nil
+
+begin
+  link_info = client.process ARGV.join(' ')
+rescue Exception => e
+  puts e.message
+end
 
 if not link_info.nil? and link_info.resolved?
   puts "Link #{link_info.text} [#{link_info.name} (#{link_info.media_file})]: #{link_info.link}"

@@ -43,6 +43,7 @@ end
 desc "Release the gem"
 task :"release:gem" do
   %x(
+      rm -rf pkg
       rake gemspec
       rake build
       rake install

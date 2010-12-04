@@ -1,8 +1,9 @@
+require 'etvnet_seek/core/page'
 require 'etvnet_seek/core/items_page'
 require 'etvnet_seek/core/channel_media_item'
 
 class ChannelsPage < ItemsPage
-  CHANNELS_URL = BASE_URL + "/tv_channels/"
+  CHANNELS_URL = Page::BASE_URL + "/tv_channels/"
 
   def initialize url = CHANNELS_URL
     super(url)

@@ -20,9 +20,13 @@ class Accessor
 
       access item
     else
-      result = cookie.scan(/sessid=([\d|\w]*);.*_lc=([\d|\w]*);.*/)
+      cookie.gsub!("\"", "\"\"")
+      #.scan(/sessid=([\d|\w]*);.*_lc=([\d|\w]*);.*/)
 
-      short_cookie = "sessid=#{result[0][0]};_lc=#{result[0][1]}"
+      result1 = cookie.scan(/.*sessid=([\d|\w]*);.*/)      
+      result2 = cookie.scan(/.*_lc=([\d|\w]*);.*/)
+
+      short_cookie = "sessid=#{result1[0][0]};_lc=#{result2[0][0]}"
       media_info = @access_page.request_media_info(item.link.scan(/.*\/(\d*)\//)[0][0], short_cookie)
 
       if media_info.session_expired?
@@ -40,6 +44,7 @@ class Accessor
   def login username, password
     cookie = @login_page.login(username, password)
 
-    cookie_helper.save_cookie cookie
+    @cookie_helper.save_cookie cookie
   end
+
 end
