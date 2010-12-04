@@ -4,24 +4,27 @@ require 'etvnet_seek/core/login_page'
 require 'etvnet_seek/link_info'
 
 class Accessor
-  def initialize cookie_file_name, get_credentials
+  def initialize cookie_file_name, credentials_collector
     @cookie_helper = CookieHelper.new cookie_file_name
-    @get_credentials = get_credentials
+    @credentials_collector = credentials_collector
 
     @access_page = AccessPage.new
     @login_page = LoginPage.new
   end
 
-  def access item
+  def access item, *params
+    @try_again = false
+
     cookie = @cookie_helper.load_cookie
 
     if cookie.nil?
-      login(*@get_credentials.call)
+      username, password = *@credentials_collector.call(*params)
 
-      access item
+      @try_again = login(username, password)
+
+      nil
     else
       cookie.gsub!("\"", "\"\"")
-      #.scan(/sessid=([\d|\w]*);.*_lc=([\d|\w]*);.*/)
 
       result1 = cookie.scan(/.*sessid=([\d|\w]*);.*/)      
       result2 = cookie.scan(/.*_lc=([\d|\w]*);.*/)
@@ -32,19 +35,27 @@ class Accessor
       if media_info.session_expired?
         @cookie_helper.delete_cookie
 
-        login(*@get_credentials)
+        username, password = *@credentials_collector.call(*params)
 
-        access item
+        @try_again = login(username, password)
+
+        nil
       else
         LinkInfo.new(item, media_info)
       end
     end
   end
 
+  def try_again?
+    @try_again
+  end
+  
   def login username, password
     cookie = @login_page.login(username, password)
 
     @cookie_helper.save_cookie cookie
+
+    cookie.nil?
   end
 
 end

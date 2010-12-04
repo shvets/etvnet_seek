@@ -59,7 +59,7 @@ task :"release:gem" do
 
     git push origin master
 
-    gem push pkg/google-translate-#{version}.gem
+    gem push pkg/#{File.basename(File.expand_path("."))}-#{version}.gem
   )
 end
 

@@ -9,7 +9,7 @@ Gem::Specification.new do |s|
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Alexander Shvets"]
-  s.date = %q{2010-12-03}
+  s.date = %q{2010-12-04}
   s.default_executable = %q{etvnet-seek}
   s.description = %q{Command line tool for getting mms urls from etvnet service.}
   s.email = %q{alexander.shvets@gmail.com}
@@ -70,7 +70,8 @@ Gem::Specification.new do |s|
   s.summary = %q{Accessing etvnet service from command line.}
   s.test_files = [
     "spec/etvnet_seek_spec.rb",
-    "spec/spec_helper.rb"
+    "spec/spec_helper.rb",
+    "spec/unit/pages_spec.rb"
   ]
 
   if s.respond_to? :specification_version then

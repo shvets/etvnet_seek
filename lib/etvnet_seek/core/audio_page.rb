@@ -15,7 +15,7 @@ class AudioPage < ItemsPage
       text = item.css("span").text.strip
       href = item['href']
 
-      unless href == '/' or href =~ /(press|register)/
+      unless href == '/' or href =~ /(press|register|persons)/
         list << MediaItem.new(text, href)
       end
     end

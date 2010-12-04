@@ -44,6 +44,25 @@ class MediaPage < ItemsPage
     list
   end
 
+  def info_movie_breadcrumbs
+    document.css(".path_movie_info_menu").inner_html
+  end
+
+  def info_movie_screenshots
+    collect_images ".all-inner-pages .screenshots"
+  end
+
+  def info_movie_descripton
+   document.css(".all-inner-pages .description")[0].children.at(0).text
+  end
+
+  def info_movie_additional_info
+    document.css(".all-inner-pages .description")[1].inner_html
+  end
+
+  def info_movie_additional_info2
+    document.css(".all-inner-pages .acc_container").inner_html
+  end
 end
 
 

@@ -111,7 +111,13 @@ class Main
     if folder
       process_folder "media", item.link
     else
-      @accessor.access item
+      result = @accessor.access item
+
+      while(@accessor.try_again? or result.nil?) do
+        result = @accessor.access item
+      end
+
+      result
     end
   end
 
