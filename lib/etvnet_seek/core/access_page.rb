@@ -14,10 +14,10 @@ class AccessPage < ServiceCall
   def request_media_info media_file, cookie
     params = { 'bitrate' => '2', 'view' => 'submit'}
 
-    if true
-      params['high_quality'] = ""
-    end
-
+#    if true
+#      params['high_quality'] = ""
+#    end
+# &other_server=1
     headers = { 'Cookie' => cookie, 'X-Requested-With' =>	'XMLHttpRequest' }
 
     response = post(params, headers, url + "#{media_file}/")

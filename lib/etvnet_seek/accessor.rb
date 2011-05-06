@@ -32,6 +32,11 @@ class Accessor
       short_cookie = "sessid=#{result1[0][0]};_lc=#{result2[0][0]}"
       media_info = @access_page.request_media_info(item.link.scan(/.*\/(\d*)\//)[0][0], short_cookie)
 
+	    #AWSUSER_ID=awsuser_id1290276702916r5408;
+      #_lc=821f084d0a9106c1d7093f9d487e6c95c4a88599;
+      #_ct="IZb4DpULgzkOZBFcc7LR5uNoQanMuRFjOcZw6oBAOuvlSFcov4PK3h3fhCFgRB+H02dmpKzsegk8\012wh8Mugw2URKnLW8nIbPJqcG6KxB2ixai8ePAoJMCp6mqvAoD5Bfm9uTLrCadLLwWEfZMi8q54MhN\01203Uo";
+      #sessid=b1798033c89a70f43c040924af721896
+
       if media_info.session_expired?
         @cookie_helper.delete_cookie
 
